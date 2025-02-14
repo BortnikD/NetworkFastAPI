@@ -4,9 +4,7 @@ from typing import Annotated
 
 from app.schemas.pagination import PaginatedResponse, PostPagination
 from app.schemas.post import PostCreate, PostPublic
-from app.services import post_service
 from app.services.post_service import PostService
-from app.services.user_service import UserService
 from app.database import get_db
 
 router = APIRouter(
