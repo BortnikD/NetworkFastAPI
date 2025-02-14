@@ -1,10 +1,15 @@
 from fastapi import FastAPI
 
-from .api.v1.routes import user_controller, post_controller
+from .api.v1.routes import base_controller
 from .models.base import Base
 from app.database import engine
 
 app = FastAPI()
+
+app.include_router(
+    base_controller.router,
+    prefix='/api/v1'
+)
 
 
 @app.on_event("startup")
@@ -13,14 +18,3 @@ def startup():
     Base.metadata.create_all(bind=engine)
 
 
-app.include_router(
-    user_controller.router,
-    prefix='/api/v1',
-    tags=['users']
-)
-
-app.include_router(
-    post_controller.router,
-    prefix='/api/v1',
-    tags=['posts']
-)
