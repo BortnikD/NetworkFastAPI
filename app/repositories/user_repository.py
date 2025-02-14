@@ -14,7 +14,7 @@ class UserRepository:
         self.db = db
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto', bcrypt__default_rounds=12)
 
-    def get_user_by_email(self, email: str):
+    def get_user_by_email(self, email: str) -> User | None:
         return self.db.query(User).filter(User.email == email).first()
     
     def create_user(self, user_create: UserCreate) -> Optional[UserPublic]:
@@ -54,5 +54,5 @@ class UserRepository:
                 count=total_count
             )
     
-    def get_user_by_id(self, id: int):
+    def get_user_by_id(self, id: int) -> User | None:
         return self.db.query(User).filter(User.id == id).first()

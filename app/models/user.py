@@ -18,5 +18,5 @@ class User(Base):
     last_active_time = Column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
     
     # comments = relationship("Comment", back_populates="user", cascade="all, delete")
-    # posts = relationship("Post", back_populates="user", cascade="all, delete")
+    posts = relationship("Post", back_populates="user", cascade="all, delete")
     # likes = relationship("Like", back_populates="user", cascade="all, delete")
