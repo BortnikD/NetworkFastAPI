@@ -5,7 +5,7 @@ from typing import Annotated
 from app.schemas.pagination import UsersPagination, PaginatedResponse
 from app.schemas.user import UserCreate, UserPublic
 from app.services.user_service import UserService
-from app.dependecies import get_db
+from app.dependecies.db import get_db
 
 router = APIRouter(
     prefix='/users'
