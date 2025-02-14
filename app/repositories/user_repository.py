@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from passlib.context import CryptContext
 from typing import Optional
 
-from app.models.user import User
+from app.database.models.user import User
 from app.schemas.user import UserCreate, UserPublic
 from app.schemas.pagination import PaginatedResponse
 from app.config import BASE_URL

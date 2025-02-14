@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from app.models.post import Post
+from app.database.models.post import Post
 from app.schemas.post import PostCreate, PostPublic
 from app.schemas.pagination import PaginatedResponse
 from app.config import BASE_URL

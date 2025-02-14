@@ -5,7 +5,7 @@ from typing import Annotated
 from app.schemas.pagination import PaginatedResponse, PostPagination
 from app.schemas.post import PostCreate, PostPublic
 from app.services.post_service import PostService
-from app.database import get_db
+from app.database.database import get_db
 
 router = APIRouter(
     prefix='/posts'
