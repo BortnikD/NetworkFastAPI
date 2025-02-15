@@ -20,3 +20,8 @@ class PostPublic(PostBase):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     is_repost: Optional[bool] 
+
+
+class PostUpdate(PostBase):
+    id: int
+    pass
