@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from app.database.models.post import Post
 from app.schemas.post import PostCreate, PostPublic, PostUpdate
 from app.schemas.pagination import PaginatedResponse
-from app.config import BASE_URL
+from app.core.config import BASE_URL
 
 
 class PostRepository:
