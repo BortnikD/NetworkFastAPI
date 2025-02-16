@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 
 from app.database.models.post import Post
 from app.schemas.post import PostCreate, PostPublic, PostUpdate
@@ -29,8 +30,14 @@ class PostRepository:
             return PaginatedResponse(
                 count=total_count
             )
+        
+    def get_post_by_id(self, post_id: int) -> Post:
+        post = self.db.query(Post).filter(Post.id == post_id).first()
+        if not post:
+            raise ValueError(f'Пост с id {post_id} не найден')
+        return post
 
-    def create_post(self, post: PostCreate) -> PostPublic:
+    def create_post(self, post: PostCreate) -> Post:
         db_post = Post(
             user_id=post.user_id,
             text_content=post.text_content
@@ -44,10 +51,12 @@ class PostRepository:
             self.db.rollback()
             raise ValueError("Ошибка при попытки создания поста в бд")
         
-    def delete_post(self, post_id: int) -> None:
+    def delete_post(self, post_id: int, user_id: int) -> None:
         post_to_delete = self.db.query(Post).filter(Post.id == post_id).first()
         if post_to_delete is None:
             raise ValueError(f"Пост с id {post_id} не найден")
+        if not (post_to_delete.user_id == user_id):
+            raise HTTPException(status_code=403, detail="You do not have access rights")
         try:
             self.db.delete(post_to_delete)
             self.db.commit()
@@ -55,10 +64,12 @@ class PostRepository:
             self.db.rollback()
             raise ValueError(f'Ошибка при удаление поста с post_id={post_id}')
         
-    def update_post(self, post: PostUpdate) -> PostPublic:
+    def update_post(self, post: PostUpdate, user_id: int) -> Post:
         db_post = self.db.query(Post).filter(Post.id == post.id).first()
         if db_post is None:
             raise ValueError(f"Пост с id {post.id} не найден")
+        if not (db_post.user_id == user_id):
+            raise HTTPException(status_code=403, detail="You do not have access rights")
         try:
             db_post.text_content = post.text_content
             self.db.commit()

@@ -1,4 +1,6 @@
 import jwt
+from typing import Optional
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from jwt.exceptions import InvalidTokenError
@@ -7,11 +9,19 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from app.database.models.user import User as UserDB
+from app.database.models.user import User
 from app.dependecies.db import get_db
 from app.schemas.user import UserPublic, UserIn 
 from app.services.user_service import UserService
-from app.dependecies.auth.schemas import Token, TokenData
+
+
+class Token(BaseModel):
+    access_token : str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str]
 
 
 # write your secret key, dont use this key | напишите свой секретный ключ не использовать этот
@@ -31,7 +41,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(db: Session, email: str, password: str) -> UserDB | Literal[False]:
+def authenticate_user(db: Session, email: str, password: str) -> User | Literal[False]:
     user = UserService(db).get_user_by_email(email)
     if not user:
         return False
@@ -51,12 +61,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
-    )
+    ) 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")

@@ -4,7 +4,6 @@ from typing import Optional
 
 
 class PostBase(BaseModel):
-    user_id: int
     text_content: str
     
     class Config: 
@@ -12,11 +11,12 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    pass
+    user_id: int
 
  
 class PostPublic(PostBase):
     id: int
+    user_id: int
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     is_repost: Optional[bool] 
@@ -24,4 +24,3 @@ class PostPublic(PostBase):
 
 class PostUpdate(PostBase):
     id: int
-    pass
