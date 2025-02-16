@@ -6,7 +6,7 @@ from typing import Optional
 from app.database.models.user import User
 from app.schemas.user import UserCreate, UserPublic
 from app.schemas.pagination import PaginatedResponse
-from app.config import BASE_URL
+from app.core.config import BASE_URL
 
 
 class UserRepository:
@@ -33,7 +33,7 @@ class UserRepository:
             return db_user
         except IntegrityError:
             self.db.rollback()
-            raise ValueError("Пользователь с таким email уже существует.")
+            raise ValueError("Пользователь с таким email или username уже существует.")
 
     def get_users(self, offset: int, limit: int) -> PaginatedResponse:
         total_count = self.db.query(User).count()
