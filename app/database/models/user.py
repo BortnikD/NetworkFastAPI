@@ -21,3 +21,8 @@ class User(Base):
     # comments = relationship("Comment", back_populates="user", cascade="all, delete")
     posts = relationship("Post", back_populates="user", cascade="all, delete")
     # likes = relationship("Like", back_populates="user", cascade="all, delete")
+
+
+    # Добавляем атрибут repr_cols
+    repr_cols = ("id", "email")  # Укажите поля, которые должны выводиться в __repr__
+    repr_cols_num = 2  # Количество полей для вывода

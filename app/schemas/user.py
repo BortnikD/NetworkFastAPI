@@ -28,3 +28,7 @@ class UserDB(UserBase):
 class UserPublic(UserBase):
     id: int
     is_active: bool = False
+
+
+class UserIn(UserBase):
+    password: str

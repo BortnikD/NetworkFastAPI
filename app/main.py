@@ -3,8 +3,14 @@ from fastapi import FastAPI
 from app.api.v1.routes import base_controller
 from app.database.models.base import Base
 from app.database.database import engine
+from app.dependecies.auth import auth
 
 app = FastAPI()
+
+app.include_router(
+    auth.router,
+    tags=['auth']
+)
 
 app.include_router(
     base_controller.router,

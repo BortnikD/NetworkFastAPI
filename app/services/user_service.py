@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
 from fastapi import status
 
+from app.database.models.user import User
 from app.schemas.user import UserCreate, UserPublic
 from app.repositories.user_repository import UserRepository
 
 
 class UserService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.user_repository = UserRepository(db)
 
     def create_user(self, user_create: UserCreate) -> UserPublic :
@@ -20,10 +21,16 @@ class UserService:
     def get_users(self, offset: int, limit: int) -> list[UserPublic]:
         return self.user_repository.get_users(offset, limit)
     
-    def get_user_by_id(self, id: int):
+    def get_user_by_id(self, id: int) -> User:
         user = self.user_repository.get_user_by_id(id)
         if user:
             return user
         else:
             raise status.HTTP_404_NOT_FOUND
 
+    def get_user_by_email(self, email: str) -> User:
+        user = self.user_repository.get_user_by_email(email)
+        if user:
+            return user
+        else:
+            raise status.HTTP_404_NOT_FOUND
