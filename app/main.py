@@ -1,9 +1,19 @@
 from fastapi import FastAPI
+import logging
 
 from app.api.v1.routes import base_controller
 from app.database.models.base import Base
 from app.database.database import engine
 from app.dependecies import auth
+
+logger = logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
+        handlers=[
+        logging.FileHandler("app/core/app.log"),  # Логи будут записываться в файл app.log
+        logging.StreamHandler()  # Логи также будут выводиться в консоль
+    ]
+)
 
 app = FastAPI()
 
@@ -20,7 +30,6 @@ app.include_router(
 
 @app.on_event("startup")
 def startup():
-    # Создание всех таблиц в базе данных (если они еще не созданы)
     Base.metadata.create_all(bind=engine)
 
 

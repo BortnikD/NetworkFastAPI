@@ -9,16 +9,18 @@ class CommentBase(BaseModel):
         from_attributes = True
 
 
-class CommentDB(CommentBase):
-    id: int
-    user_id: int
-    created_at: datetime
-
-
 class CommentCreate(CommentBase):
-    pass
+    post_id: int
+
+
+class CommentUpdate(CommentBase):
+    id: int
 
 
 class CommentPublic(CommentBase):
     id: int
+    user_id: int
+    post_id: int
+    created_at: datetime
+    is_repost: bool = False
     

@@ -18,7 +18,7 @@ class User(Base):
     date_joined: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     last_active_time: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
     
-    # comments = relationship("Comment", back_populates="user", cascade="all, delete")
+    comments = relationship("Comment", back_populates="user", cascade="all, delete")
     posts = relationship("Post", back_populates="user", cascade="all, delete")
     # likes = relationship("Like", back_populates="user", cascade="all, delete")
 

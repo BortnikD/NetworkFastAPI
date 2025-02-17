@@ -16,4 +16,6 @@ class Post(Base):
     is_repost: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     user = relationship('User', back_populates='posts', cascade='all, delete')
+    comments = relationship("Comment", back_populates="post", cascade='all, delete') 
+
 
