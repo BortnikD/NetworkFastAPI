@@ -6,7 +6,7 @@ from app.database.models.base import Base
 from app.database.database import engine
 from app.dependecies import auth
 
-logger = logging.basicConfig(
+logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
         handlers=[
