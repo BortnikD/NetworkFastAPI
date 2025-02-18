@@ -31,8 +31,9 @@ class CommentRepository:
             raise ValueError("Ошибка при попытке создать комментарий")
         
     def get_comments_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
-        comments_count = self.db.query(Comment).filter(Comment.post_id == post_id).count()
-        comments = self.db.query(Comment).filter(Comment.post_id == post_id).offset(offset).limit(limit).all()
+        comments_query = self.db.query(Comment).filter(Comment.post_id == post_id)
+        comments_count = comments_query.count()
+        comments = comments_query.offset(offset).limit(limit).all()
         if comments:
             comments = [CommentPublic.from_orm(comment) for comment in comments]
             prev_offset = offset - limit if offset > 0 else None

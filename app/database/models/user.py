@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Boolean, TIMESTAMP, func
+from sqlalchemy import BIGINT, String, Boolean, TIMESTAMP, func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 
@@ -8,7 +8,7 @@ from .base import Base
 class User(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     username: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(256), nullable=False)

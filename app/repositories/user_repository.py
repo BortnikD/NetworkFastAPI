@@ -36,8 +36,9 @@ class UserRepository:
             raise ValueError("Пользователь с таким email или username уже существует.")
 
     def get_users(self, offset: int, limit: int) -> PaginatedResponse:
-        total_count = self.db.query(User).count()
-        users = self.db.query(User).offset(offset).limit(limit).all()
+        users_query = self.db.query(User)
+        total_count = users_query.count()
+        users = users_query.offset(offset).limit(limit).all()
         if users:
             users = [UserPublic.from_orm(user) for user in users]
             prev_offset = offset - limit if offset > 0 else None

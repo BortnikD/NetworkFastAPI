@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException
 
 from app.database.models.post import Post
@@ -13,8 +13,9 @@ class PostRepository:
         self.db = db
 
     def get_posts(self, offset: int, limit: int, order_by: Post = Post.created_at.desc()) -> PaginatedResponse:
-        total_count = self.db.query(Post).count()
-        posts = self.db.query(Post).order_by(order_by).offset(offset).limit(limit).all()
+        posts_query = self.db.query(Post)
+        total_count = posts_query.count()
+        posts = posts_query.offset(offset).limit(limit).all()
         if posts: 
             posts = [PostPublic.from_orm(post) for post in posts]
             prev_offset = offset - limit if offset > 0 else None
@@ -60,7 +61,7 @@ class PostRepository:
         try:
             self.db.delete(post_to_delete)
             self.db.commit()
-        except IntegrityError:
+        except SQLAlchemyError:
             self.db.rollback()
             raise ValueError(f'Ошибка при удаление поста с post_id={post_id}')
         
