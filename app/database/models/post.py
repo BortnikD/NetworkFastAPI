@@ -9,13 +9,14 @@ class Post(Base):
     __tablename__ = 'posts'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=True)
-    text_content: Mapped[str] = mapped_column(String, default=None, nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), nullable=False, index=True)
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
+    text_content: Mapped[str] = mapped_column(String, nullable=True)
     is_repost: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    user = relationship('User', back_populates='posts', cascade='all, delete')
+    user = relationship('User', back_populates='posts')
+    likes = relationship('Like', back_populates='post', cascade='all, delete')
     comments = relationship("Comment", back_populates="post", cascade='all, delete') 
 
 
