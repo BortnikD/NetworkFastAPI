@@ -3,15 +3,15 @@ import logging
 
 from app.api.v1.routes import base_controller
 from app.database.models.base import Base
-from app.database.database import engine
+from app.database.database import engine, AsyncSessionLocal
 from app.dependecies import auth
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
-        handlers=[
-        logging.FileHandler("app/core/app.log"),  # Логи будут записываться в файл app.log
-        logging.StreamHandler()  # Логи также будут выводиться в консоль
+    handlers=[
+        logging.FileHandler("app/core/app.log"),
+        logging.StreamHandler()
     ]
 )
 
@@ -27,9 +27,14 @@ app.include_router(
     prefix='/api/v1'
 )
 
-
 @app.on_event("startup")
-def startup():
-    Base.metadata.create_all(bind=engine)
+async def startup():
+    # Используем соединение напрямую для выполнения синхронной операции
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
+@app.on_event("shutdown")
+async def shutdown():
+    # Закрываем соединение с базой данных при завершении работы
+    await engine.dispose()

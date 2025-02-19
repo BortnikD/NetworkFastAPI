@@ -1,5 +1,6 @@
 import logging
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 from passlib.context import CryptContext
 
@@ -10,16 +11,17 @@ from app.core.config import BASE_URL
 
 
 class UserRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto', bcrypt__default_rounds=12)
 
-    def get_user_by_email(self, email: str) -> User | None:
-        return self.db.query(User).filter(User.email == email).first()
+    async def get_user_by_email(self, email: str) -> User | None:
+        result = await self.db.execute(select(User).filter(User.email == email))
+        return result.scalars().first()
     
-    def create_user(self, user_create: UserCreate) -> User:
+    async def create_user(self, user_create: UserCreate) -> User:
         hashed_password = self.pwd_context.hash(user_create.password)
-        db_user = User (
+        db_user = User(
             username=user_create.username,
             email=user_create.email,
             first_name=user_create.first_name,
@@ -29,17 +31,20 @@ class UserRepository:
         logging.info(db_user)
         self.db.add(db_user)
         try:
-            self.db.commit()
-            self.db.refresh(db_user)
+            await self.db.commit() 
+            await self.db.refresh(db_user) 
             return db_user
         except IntegrityError:
-            self.db.rollback()
+            await self.db.rollback()  
             raise ValueError("Пользователь с таким email или username уже существует.")
 
-    def get_users(self, offset: int, limit: int) -> PaginatedResponse:
-        users_query = self.db.query(User)
-        total_count = users_query.count()
-        users = users_query.offset(offset).limit(limit).all()
+    async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
+        result = await self.db.execute(select(User))
+        total_count = len(result.scalars().all())
+
+        result = await self.db.execute(select(User).offset(offset).limit(limit))
+        users = result.scalars().all()
+
         if users:
             users = [UserPublic.from_orm(user) for user in users]
             prev_offset = offset - limit if offset > 0 else None
@@ -52,9 +57,8 @@ class UserRepository:
                 results=users
             )
         else:
-            return PaginatedResponse(
-                count=total_count
-            )
-    
-    def get_user_by_id(self, id: int) -> User | None:
-        return self.db.query(User).filter(User.id == id).first()
+            return PaginatedResponse(count=total_count)
+
+    async def get_user_by_id(self, id: int) -> User | None:
+        result = await self.db.execute(select(User).filter(User.id == id))
+        return result.scalars().first()

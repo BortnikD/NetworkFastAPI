@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Session
+import logging
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from app.database.models.post import Post
 from app.schemas.post import PostCreate, PostPublic, PostUpdate
@@ -9,14 +11,17 @@ from app.core.config import BASE_URL
 
 
 class PostRepository:
-    def __init__(self, db: Session) -> None:
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    def get_posts(self, offset: int, limit: int, order_by: Post = Post.created_at.desc()) -> PaginatedResponse:
-        posts_query = self.db.query(Post)
-        total_count = posts_query.count()
-        posts = posts_query.offset(offset).limit(limit).all()
-        if posts: 
+    async def get_posts(self, offset: int, limit: int, order_by: Post = Post.created_at.desc()) -> PaginatedResponse:
+        result = await self.db.execute(select(Post).order_by(order_by))
+        total_count = len(result.scalars().all())
+        
+        result = await self.db.execute(select(Post).offset(offset).limit(limit).order_by(order_by))
+        posts = result.scalars().all()
+        
+        if posts:
             posts = [PostPublic.from_orm(post) for post in posts]
             prev_offset = offset - limit if offset > 0 else None
             next_offset = offset + limit if offset + limit < total_count else None
@@ -28,53 +33,54 @@ class PostRepository:
                 results=posts
             )
         else:
-            return PaginatedResponse(
-                count=total_count
-            )
+            return PaginatedResponse(count=total_count)
         
-    def get_post_by_id(self, post_id: int) -> Post:
-        post = self.db.query(Post).filter(Post.id == post_id).first()
+    async def get_post_by_id(self, post_id: int) -> Post:
+        result = await self.db.execute(select(Post).filter(Post.id == post_id))
+        post = result.scalars().first()
         if not post:
             raise ValueError(f'Пост с id {post_id} не найден')
         return post
 
-    def create_post(self, post: PostCreate) -> Post:
+    async def create_post(self, post: PostCreate) -> Post:
         db_post = Post(
             user_id=post.user_id,
             text_content=post.text_content
         )
         self.db.add(db_post)
         try:
-            self.db.commit()
-            self.db.refresh(db_post)
+            await self.db.commit() 
+            await self.db.refresh(db_post)  
             return db_post  
         except IntegrityError:
-            self.db.rollback()
-            raise ValueError("Ошибка при попытки создания поста в бд")
-        
-    def delete_post(self, post_id: int, user_id: int) -> None:
-        post_to_delete = self.db.query(Post).filter(Post.id == post_id).first()
+            await self.db.rollback()  
+            raise ValueError("Ошибка при попытке создания поста в бд")
+
+    async def delete_post(self, post_id: int, user_id: int) -> None:
+        result = await self.db.execute(select(Post).filter(Post.id == post_id))
+        post_to_delete = result.scalars().first()
         if post_to_delete is None:
             raise ValueError(f"Пост с id {post_id} не найден")
-        if not (post_to_delete.user_id == user_id):
+        if post_to_delete.user_id != user_id:
             raise HTTPException(status_code=403, detail="You do not have access rights")
         try:
-            self.db.delete(post_to_delete)
-            self.db.commit()
+            await self.db.delete(post_to_delete)
+            await self.db.commit()  
         except SQLAlchemyError:
-            self.db.rollback()
-            raise ValueError(f'Ошибка при удаление поста с post_id={post_id}')
+            await self.db.rollback() 
+            raise ValueError(f'Ошибка при удалении поста с post_id={post_id}')
         
-    def update_post(self, post: PostUpdate, user_id: int) -> Post:
-        db_post = self.db.query(Post).filter(Post.id == post.id).first()
+    async def update_post(self, post: PostUpdate, user_id: int) -> Post:
+        result = await self.db.execute(select(Post).filter(Post.id == post.id))
+        db_post = result.scalars().first()
         if db_post is None:
             raise ValueError(f"Пост с id {post.id} не найден")
-        if not (db_post.user_id == user_id):
+        if db_post.user_id != user_id:
             raise HTTPException(status_code=403, detail="You do not have access rights")
         try:
             db_post.text_content = post.text_content
-            self.db.commit()
+            await self.db.commit() 
             return db_post
         except IntegrityError:
-            self.db.rollback()
+            await self.db.rollback() 
             raise ValueError(f'Ошибка при изменении поста с post_id={post.id}')

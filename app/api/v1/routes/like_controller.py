@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, Body
 from fastapi.params import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
 from app.database.models.user import User
@@ -16,18 +16,18 @@ router = APIRouter(
 
 
 @router.get('/{post_id}', response_model=PaginatedResponse)
-async def read_likes(post_id: int, pagination: Annotated[LikePagination, Query()], db: Session = Depends(get_db)):
+async def read_likes(post_id: int, pagination: Annotated[LikePagination, Query()], db: AsyncSession = Depends(get_db)):
     like_service = LikeService(db)
-    return like_service.get_likes_by_post_id(post_id, pagination.offset, pagination.limit)
+    return await like_service.get_likes_by_post_id(post_id, pagination.offset, pagination.limit)
 
 
 @router.post('/', response_model=LikePublic)
-async def create_like(like: LikeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+async def create_like(like: LikeCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     like_service = LikeService(db)
-    return like_service.create_like(like.post_id, current_user.id)
+    return await like_service.create_like(like.post_id, current_user.id)
 
 
 @router.delete('/{post_id}')
-async def delete_like(post_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+async def delete_like(post_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     like_service = LikeService(db)
-    return like_service.delete_like(post_id, current_user.id)
+    return await like_service.delete_like(post_id, current_user.id)

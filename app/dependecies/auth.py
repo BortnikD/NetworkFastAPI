@@ -1,7 +1,6 @@
 import jwt
-from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from passlib.context import CryptContext
 from jwt.exceptions import InvalidTokenError
 from typing import Annotated, Literal, Optional
@@ -42,8 +41,8 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(db: Session, email: str, password: str) -> User | Literal[False]:
-    user = UserService(db).get_user_by_email(email)
+async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | Literal[False]:
+    user = await UserService(db).get_user_by_email(email)
     if not user:
         return False
     if not verify_password(password, user.password_hash):
@@ -62,7 +61,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)) -> User:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: AsyncSession = Depends(get_db)) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -76,7 +75,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         token_data = TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
-    user = UserService(db).get_user_by_email(token_data.email)
+    user = await UserService(db).get_user_by_email(token_data.email)
     if user is None:
         raise credentials_exception
     return user
@@ -95,13 +94,13 @@ router = APIRouter()
     
 @router.post("/token")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db),  
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: AsyncSession = Depends(get_db),
 ) -> Token:
     """
     Процесс авторизация производится через email, поле username является стандартным для OAuth2
     но ничто не мешает нам передавать в него email
     """
-    user = authenticate_user(db, form_data.username, form_data.password) 
+    user = await authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

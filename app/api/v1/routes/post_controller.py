@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, Body
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
 from app.schemas.user import UserPublic
@@ -16,10 +16,10 @@ router = APIRouter(
 
 @router.get('/', response_model=PaginatedResponse)
 async def read_posts(pagination: Annotated[PostPagination, Query()],
-                    db: Session = Depends(get_db)):
+                    db: AsyncSession = Depends(get_db)):
     post_service = PostService(db)
     try:
-        posts = post_service.get_posts(pagination.offset, pagination.limit)
+        posts = await post_service.get_posts(pagination.offset, pagination.limit)
         return posts
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -27,35 +27,35 @@ async def read_posts(pagination: Annotated[PostPagination, Query()],
 
 @router.post('/', response_model=PostPublic)
 async def create_post(text_content: str = Body(),
-                    db: Session = Depends(get_db),
+                    db: AsyncSession = Depends(get_db),
                     current_user: UserPublic = Depends(get_current_active_user)):
     post_service = PostService(db)
     try:
         post = PostCreate(text_content=text_content, user_id=current_user.id)
-        post = post_service.create_post(post)
+        post = await post_service.create_post(post)
         return post
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
 
 @router.delete('/{post_id}')
-async def delete_post(post_id: int, db: Session = Depends(get_db),
+async def delete_post(post_id: int, db: AsyncSession = Depends(get_db),
                       current_user: UserPublic = Depends(get_current_active_user)) -> None:
     post_service = PostService(db)
     
     try:
-        detail = post_service.delete_post(post_id, current_user.id)  
+        detail = await post_service.delete_post(post_id, current_user.id)  
         return detail
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.patch('/', response_model=PostPublic)
-async def update_post(post: PostUpdate, db: Session = Depends(get_db),
+async def update_post(post: PostUpdate, db: AsyncSession = Depends(get_db),
                       current_user: UserPublic = Depends(get_current_active_user)):
     post_service = PostService(db)
     try:
-        post = post_service.update_post(post, current_user.id)
+        post = await post_service.update_post(post, current_user.id)
         return post
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
