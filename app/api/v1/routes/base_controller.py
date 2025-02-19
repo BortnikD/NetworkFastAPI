@@ -1,8 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.routes import comment_controller
-
-from . import post_controller, user_controller
+from . import post_controller, user_controller, comment_controller, like_controller
 
 
 router = APIRouter()
@@ -21,4 +19,9 @@ router.include_router(
 router.include_router(
     comment_controller.router,
     tags=['comments']
+)
+
+router.include_router(
+    like_controller.router,
+    tags=['likes']
 )

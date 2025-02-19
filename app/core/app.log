@@ -1,0 +1,78 @@
+ERROR | 2025-02-18 18:51:15,815 | root |  like with user_id=3, post_id=1 not created
+ERROR | 2025-02-18 18:51:21,455 | root |  like with user_id=3, post_id=2 not created
+WARNING | 2025-02-18 18:51:34,584 | root |  likes by post_id=1 not issued, total_count=0
+ERROR | 2025-02-18 18:51:42,592 | root |  like with user_id=3, post_id=1 not created
+ERROR | 2025-02-18 18:53:13,062 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:53:42,255 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:55:52,162 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:56:19,647 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:58:05,056 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:58:38,279 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 18:59:02,330 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 19:00:13,253 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 19:00:48,480 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 19:03:52,743 | root |  (sqlite3.IntegrityError) NOT NULL constraint failed: likes.id
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (?, ?) RETURNING id, created_at]
+[parameters: (3, 1)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR | 2025-02-18 19:05:11,853 | root |  Due to some error, the comment with post_id = 2 and user_id = 3 was not created.
+ERROR | 2025-02-18 19:05:21,048 | root |  Due to some error, the comment with post_id = 1 and user_id = 3 was not created.
+ERROR | 2025-02-18 19:05:49,827 | root |  Due to some error, the comment with post_id = 8 and user_id = 3 was not created.
+ERROR | 2025-02-18 19:07:01,909 | root |  Due to some error, the comment with post_id = 8 and user_id = 3 was not created.
+ERROR | 2025-02-18 19:07:09,154 | root |  Due to some error, the comment with post_id = 8 and user_id = 3 was not created.
+INFO | 2025-02-18 19:56:53,347 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 19:57:09,882 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 19:57:31,009 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 19:57:37,383 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:00:34,540 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:00:59,192 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:01:10,045 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:01:10,048 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:01:51,580 | root |  username='sdfweggds' email='userdfsf@example.com' first_name='string' last_name='string' password='string'
+INFO | 2025-02-18 20:02:05,045 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:03:58,481 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:04:21,872 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com>
+INFO | 2025-02-18 20:05:04,030 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com, password_hash=$2b$12$zyHSmtS2sehHHyLCEW8H7OP9OUKPbnf.Og0L.Vb9UULbs5XClAB66, date_joined=None>
+INFO | 2025-02-18 20:05:39,290 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com, date_joined=None>
+INFO | 2025-02-18 20:08:51,027 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com, date_joined=None>
+INFO | 2025-02-18 20:14:47,715 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com, date_joined=None>
+INFO | 2025-02-18 20:17:27,089 | root |  <Model User id=None, username=sdfweggds, email=userdfsf@example.com, date_joined=None>
+INFO | 2025-02-18 20:20:46,607 | root |  <Model User id=None, username=string, email=user@example.com, date_joined=None>
+INFO | 2025-02-18 20:21:24,303 | root |  <Model User id=None, username=string, email=user@example.com, date_joined=None>
+INFO | 2025-02-18 20:21:30,992 | root |  <Model User id=None, username=fgdgdfgdfg, email=user@sdfsdfsdfsfd.com, date_joined=None>
+INFO | 2025-02-18 20:22:10,844 | root |  <Model User id=None, username=fgdgdfgdfg, email=user@sdfsdfsdfsfd.com, date_joined=None>
+INFO | 2025-02-19 18:22:17,497 | root |  <Model User id=None, username=string, email=user@example.com, date_joined=None>
+INFO | 2025-02-19 18:26:10,328 | root |  like with id = 1, user_id=1, post_id=1 created
+ERROR | 2025-02-19 18:26:16,119 | root |  (psycopg2.errors.UniqueViolation) ОШИБКА:  повторяющееся значение ключа нарушает ограничение уникальности "unique_like"
+DETAIL:  Ключ "(user_id, post_id)=(1, 1)" уже существует.
+
+[SQL: INSERT INTO likes (user_id, post_id) VALUES (%(user_id)s, %(post_id)s) RETURNING likes.id, likes.created_at]
+[parameters: {'user_id': 1, 'post_id': 1}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)

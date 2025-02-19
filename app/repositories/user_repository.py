@@ -1,7 +1,7 @@
+import logging
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from passlib.context import CryptContext
-from typing import Optional
 
 from app.database.models.user import User
 from app.schemas.user import UserCreate, UserPublic
@@ -17,7 +17,7 @@ class UserRepository:
     def get_user_by_email(self, email: str) -> User | None:
         return self.db.query(User).filter(User.email == email).first()
     
-    def create_user(self, user_create: UserCreate) -> Optional[UserPublic]:
+    def create_user(self, user_create: UserCreate) -> User:
         hashed_password = self.pwd_context.hash(user_create.password)
         db_user = User (
             username=user_create.username,
@@ -26,6 +26,7 @@ class UserRepository:
             last_name=user_create.last_name,
             password_hash=hashed_password
         )
+        logging.info(db_user)
         self.db.add(db_user)
         try:
             self.db.commit()

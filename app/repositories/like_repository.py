@@ -24,6 +24,8 @@ class LikeRepository:
             self.db.refresh(like)
             logging.info(f'like with id = {like.id}, user_id={like.user_id}, post_id={post_id} created')
             return like
+        except SQLAlchemyError as e:
+            logging.error(e)
         except IntegrityError:
             self.db.rollback()
             logging.error(f'like with user_id={current_user_id}, post_id={post_id} not created')
@@ -32,7 +34,8 @@ class LikeRepository:
                 detail="You have already liked this post"
             )
 
-    def get_likes(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
+
+    def get_likes_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
         likes_query = self.db.query(Like).filter(Like.post_id == post_id)
         count = likes_query.count()
         likes = likes_query.offset(offset).limit(limit).all()

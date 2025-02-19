@@ -10,7 +10,9 @@ from app.schemas.pagination import CommentPagination, PaginatedResponse
 from app.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.services.comment_service import CommentService
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/comments'
+)
 
 
 @router.post('/', response_model=CommentPublic)

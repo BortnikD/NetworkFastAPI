@@ -6,11 +6,11 @@ class LikeBase(BaseModel):
     post_id: int
 
 
-class LikeCreate(BaseModel):
+class LikeCreate(LikeBase):
     pass
 
 
-class LikePublic(BaseModel):
+class LikePublic(LikeBase):
     id: int
     user_id: int
     created_at: datetime
