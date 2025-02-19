@@ -2,8 +2,8 @@
 This project is an example of how you can organize a backend for your social network
 
 ## Technologies
-- FastAPI
-- SQLAlchemy
+- _FastAPI_
+- _SQLAlchemy (postgres)_
 
 
 ## Installation 
@@ -17,7 +17,18 @@ git clone https://github.com/BortnikD/networkBackendFastApi.git
 pip install -r requirements.txt
 ```
 
-3. Start the server
+3. Set env variables
+```bash
+set API_KEY "your_api_key"
+set DATABASE "your_database_name"
+set USER "your_username"
+set HOST "your_host"
+set PORT "your_port"
+set PASSWORD "your_password"
+set API_KEY "your_api_key"
+```
+
+4. Start the server
 ```bash
 uvicorn app.main:app --reload
 ```
