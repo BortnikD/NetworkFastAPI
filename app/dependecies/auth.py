@@ -13,6 +13,7 @@ from app.database.models.user import User
 from app.dependecies.db import get_db
 from app.schemas.user import UserPublic, UserIn 
 from app.services.user_service import UserService
+from app.core.config import AUTH_KEY
 
 
 class Token(BaseModel):
@@ -24,8 +25,8 @@ class TokenData(BaseModel):
     email: Optional[str]
 
 
-# write your secret key, dont use this key | напишите свой секретный ключ не использовать этот
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+SECRET_KEY = AUTH_KEY
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 

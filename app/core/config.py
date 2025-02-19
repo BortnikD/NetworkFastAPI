@@ -12,3 +12,5 @@ PORT = os.getenv('PORT')
 DB_URL = f'postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
 
 BASE_URL = 'http://127.0.0.1:8000'
+
+AUTH_KEY = os.getenv('AUTH_KEY')
