@@ -17,6 +17,7 @@ class Post(Base):
 
     user = relationship('User', back_populates='posts')
     likes = relationship('Like', back_populates='post', cascade='all, delete')
-    comments = relationship("Comment", back_populates="post", cascade='all, delete') 
+    comments = relationship("Comment", back_populates="post", cascade='all, delete')
+    images = relationship('Image', back_populates='post', cascade='all, delete')
 
 
