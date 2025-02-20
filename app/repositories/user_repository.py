@@ -1,4 +1,5 @@
 import logging
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
@@ -17,6 +18,10 @@ class UserRepository:
 
     async def get_user_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).filter(User.email == email))
+        if not result:
+            logging.warning(f'user with email={email} does not exist')
+            raise HTTPException(status_code=404, detail="User with this email does not exist")
+        logging.info(f"User with email={email} has been issued")
         return result.scalars().first()
     
     async def create_user(self, user_create: UserCreate) -> User:
@@ -28,14 +33,15 @@ class UserRepository:
             last_name=user_create.last_name,
             password_hash=hashed_password
         )
-        logging.info(db_user)
         self.db.add(db_user)
         try:
             await self.db.commit() 
-            await self.db.refresh(db_user) 
+            await self.db.refresh(db_user)
+            logging.info(f"User with username={UserCreate.username} is created")
             return db_user
         except IntegrityError:
-            await self.db.rollback()  
+            await self.db.rollback()
+            logging.warning(f"An error occurred while creating user with username={UserCreate.username}")
             raise ValueError("Пользователь с таким email или username уже существует.")
 
     async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
@@ -49,7 +55,7 @@ class UserRepository:
             users = [UserPublic.from_orm(user) for user in users]
             prev_offset = offset - limit if offset > 0 else None
             next_offset = offset + limit if offset + limit < total_count else None
-
+            logging.info(f"users has been issued with count={total_count}")
             return PaginatedResponse(
                 count=total_count,
                 prev=f"{BASE_URL}/api/v1/users?offset={prev_offset}&limit={limit}" if prev_offset is not None else None,
@@ -57,6 +63,7 @@ class UserRepository:
                 results=users
             )
         else:
+            logging.warning('users has not been issued')
             return PaginatedResponse(count=total_count)
 
     async def get_user_by_id(self, id: int) -> User | None:

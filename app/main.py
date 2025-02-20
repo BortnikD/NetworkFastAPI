@@ -1,13 +1,13 @@
-from fastapi import FastAPI
 import logging
+from fastapi import FastAPI
 
 from app.api.v1.routes import base_controller
 from app.database.models.base import Base
-from app.database.database import engine, AsyncSessionLocal
+from app.database.database import engine
 from app.dependecies import auth
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
     handlers=[
         logging.FileHandler("app/core/app.log"),
@@ -26,6 +26,7 @@ app.include_router(
     base_controller.router,
     prefix='/api/v1'
 )
+
 
 @app.on_event("startup")
 async def startup():
