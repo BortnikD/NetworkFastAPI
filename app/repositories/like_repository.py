@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.config import BASE_URL
+from app.core.utils.pages import get_prev_next_pages
 from app.database.models.like import Like
 from app.api.schemas.like import LikePublic
 from app.api.schemas.pagination import PaginatedResponse
@@ -43,14 +44,13 @@ class LikeRepository:
 
         if likes:
             likes = [LikePublic.from_orm(like) for like in likes]
-            prev_offset = offset - limit if offset > 0 else None
-            next_offset = offset + limit if offset + limit < count else None
+            prev, next = get_prev_next_pages(offset, limit, count, 'likes')
             logging.info(f'likes by post_id={post_id} issued, total_count={count}')
 
             return PaginatedResponse(
                 count=count,
-                prev=f"{BASE_URL}/api/v1/likes?offset={prev_offset}&limit={limit}" if prev_offset is not None else None,
-                next=f"{BASE_URL}/api/v1/likes?offset={next_offset}&limit={limit}" if next_offset is not None else None,
+                prev=prev,
+                next=next,
                 results=likes
             )
         else:

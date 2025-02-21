@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.database.models.user import User
 from app.api.schemas.user import UserCreate, UserPublic
 from app.api.schemas.pagination import PaginatedResponse
-from app.core.config import BASE_URL
 from app.core.security import pwd_context
+from app.core.utils.pages import get_prev_next_pages
 
 
 class UserRepository:
@@ -57,13 +57,12 @@ class UserRepository:
 
         if users:
             users = [UserPublic.from_orm(user) for user in users]
-            prev_offset = offset - limit if offset > 0 else None
-            next_offset = offset + limit if offset + limit < total_count else None
+            prev, next = get_prev_next_pages(offset, limit, total_count, 'users')
             logging.info(f"users has been issued with count={total_count}")
             return PaginatedResponse(
                 count=total_count,
-                prev=f"{BASE_URL}/api/v1/users?offset={prev_offset}&limit={limit}" if prev_offset is not None else None,
-                next=f"{BASE_URL}/api/v1/users?offset={next_offset}&limit={limit}" if next_offset is not None else None,
+                prev=prev,
+                next=next,
                 results=users
             )
         else:

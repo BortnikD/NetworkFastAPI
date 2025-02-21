@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from app.database.models.post import Post
 from app.api.schemas.post import PostCreate, PostPublic, PostUpdate
 from app.api.schemas.pagination import PaginatedResponse
-from app.core.config import BASE_URL
+from app.core.utils.pages import get_prev_next_pages
 
 
 class PostRepository:
@@ -22,13 +22,12 @@ class PostRepository:
         
         if posts:
             posts = [PostPublic.from_orm(post) for post in posts]
-            prev_offset = offset - limit if offset > 0 else None
-            next_offset = offset + limit if offset + limit < total_count else None
+            prev, next = get_prev_next_pages(offset, limit, total_count, 'posts')
 
             return PaginatedResponse(
                 count=total_count,
-                prev=f"{BASE_URL}/api/v1/posts?offset={prev_offset}&limit={limit}" if prev_offset is not None else None,
-                next=f"{BASE_URL}/api/v1/posts?offset={next_offset}&limit={limit}" if next_offset is not None else None,
+                prev=prev,
+                next=next,
                 results=posts
             )
         else:

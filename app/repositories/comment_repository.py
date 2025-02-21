@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.core.utils.pages import get_prev_next_pages
 from app.database.models.comment import Comment
 from app.api.schemas.pagination import PaginatedResponse
-from app.core.config import BASE_URL
 
 
 class CommentRepository:
@@ -39,13 +39,12 @@ class CommentRepository:
         
         if comments:
             comments = [CommentPublic.from_orm(comment) for comment in comments]
-            prev_offset = offset - limit if offset > 0 else None
-            next_offset = offset + limit if offset + limit < comments_count else None
+            prev, next = get_prev_next_pages(offset, limit, comments_count, 'comments')
             logging.info(f"Fetched {len(comments)} comments for post_id = {post_id}, offset = {offset}, limit = {limit}")
             return PaginatedResponse(
                 count=comments_count,
-                prev=f"{BASE_URL}/api/v1/comments?offset={prev_offset}&limit={limit}" if prev_offset is not None else None,
-                next=f"{BASE_URL}/api/v1/comments?offset={next_offset}&limit={limit}" if next_offset is not None else None,
+                prev=prev,
+                next=next,
                 results=comments
             )
         else:
