@@ -24,5 +24,5 @@ class User(Base):
     likes = relationship("Like", back_populates="user", cascade="all, delete")
     images = relationship('Image', back_populates='user', cascade="all, delete")
 
-    repr_cols = ("id", "username", "email", "date_joined")  # Укажите поля, которые должны выводиться в __repr__
-    repr_cols_num = 3  # Количество полей для вывода
+    repr_cols = ("id", "username", "email", "date_joined")  
+    repr_cols_num = 3  

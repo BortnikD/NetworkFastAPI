@@ -17,5 +17,5 @@ class Comment(Base):
     user = relationship("User", back_populates="comments", cascade="all, delete")
     post = relationship("Post", back_populates="comments", cascade="all, delete") 
 
-    repr_cols = ("id", "user_id", "post_id", "text_content")  # Укажите поля, которые должны выводиться в __repr__
-    repr_cols_num = 4  # Количество полей для вывода
+    repr_cols = ("id", "user_id", "post_id", "text_content") 
+    repr_cols_num = 4  
