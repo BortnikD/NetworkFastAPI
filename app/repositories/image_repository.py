@@ -36,11 +36,11 @@ class ImageRepository:
             logging.error(f"Database error: {str(e)}")
             raise HTTPException(status_code=500, detail="Internal server error")
 
-    async def get_images_by_post_id(self, post_id: int) -> list[Image] | None:
+    async def get_sources_by_post_id(self, post_id: int) -> list[Image] | None:
         result = await self.db.execute(select(Image).where(Image.post_id == post_id))
         images = result.scalars().all()
         if not images:
             logging.warning(f'image with post_id={post_id} is not found')
             raise HTTPException(status_code=404, detail="image is not found")
-        logging.info(f'image with post_id={post_id} is found')
+        logging.info(f'images with post_id={post_id} is found')
         return list(images)

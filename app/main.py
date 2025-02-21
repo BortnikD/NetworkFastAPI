@@ -7,7 +7,7 @@ from app.database.database import engine
 from app.dependecies import auth
 
 logging.basicConfig(
-    level=logging.WARNING,
+    level=logging.INFO,
     format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
     handlers=[
         logging.FileHandler("app/core/app.log"),

@@ -9,6 +9,7 @@ from app.database.models.user import User
 from app.dependecies.db import get_db
 from app.dependecies.auth import get_current_user
 from app.services.image_service import ImageService
+from app.schemas.image import Image
 from app.core.config import POSTS_IMAGES_DIR, BASE_URL
 
 router = APIRouter(
@@ -64,3 +65,8 @@ async def download_file(file_path: str):
 
     return FileResponse(requested_path)
 
+
+@router.get('/get_sources/{post_id}', response_model=list[Image])
+async def get_sources_by_post_id(post_id: int, db: AsyncSession = Depends(get_db)):
+    image_service = ImageService(db)
+    return await image_service.get_sources_by_post_id(post_id)
