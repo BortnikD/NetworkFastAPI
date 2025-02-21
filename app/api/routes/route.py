@@ -2,7 +2,6 @@ from fastapi import APIRouter
 
 from . import post_controller, user_controller, comment_controller, like_controller, image_controller
 
-
 router = APIRouter()
 
 

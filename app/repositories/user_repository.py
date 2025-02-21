@@ -2,19 +2,19 @@ import logging
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
-from passlib.context import CryptContext
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.database.models.user import User
 from app.api.schemas.user import UserCreate, UserPublic
 from app.api.schemas.pagination import PaginatedResponse
 from app.core.config import BASE_URL
+from app.core.security import pwd_context
 
 
 class UserRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto', bcrypt__default_rounds=12)
+        self.pwd_context = pwd_context
 
     async def get_user_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).filter(User.email == email))
@@ -23,7 +23,7 @@ class UserRepository:
             raise HTTPException(status_code=404, detail="User with this email does not exist")
         logging.info(f"User with email={email} has been issued")
         return result.scalars().first()
-    
+
     async def create_user(self, user_create: UserCreate) -> User:
         hashed_password = self.pwd_context.hash(user_create.password)
         db_user = User(
@@ -35,14 +35,18 @@ class UserRepository:
         )
         self.db.add(db_user)
         try:
-            await self.db.commit() 
+            await self.db.commit()
             await self.db.refresh(db_user)
-            logging.info(f"User with username={UserCreate.username} is created")
+            logging.info("User is created")
             return db_user
         except IntegrityError:
             await self.db.rollback()
-            logging.warning(f"An error occurred while creating user with username={UserCreate.username}")
+            logging.error(f"An error occurred while creating user")
             raise ValueError("Пользователь с таким email или username уже существует.")
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logging.error(str(e))
+            raise ValueError("Ошибка при создании пользователя.")
 
     async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
         result = await self.db.execute(select(User))

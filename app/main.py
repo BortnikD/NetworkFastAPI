@@ -1,10 +1,9 @@
 import logging
 from fastapi import FastAPI
 
-from app.api.routes import base_controller
+from app.api.routes import route, auth_controller
 from app.database.models.base import Base
 from app.database.database import engine
-from app.api.dependencies import auth
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,19 +17,18 @@ logging.basicConfig(
 app = FastAPI()
 
 app.include_router(
-    auth.router,
-    tags=['auth']
+    route.router,
+    prefix='/api'
 )
 
 app.include_router(
-    base_controller.router,
-    prefix='/api/v1'
+    auth_controller.router,
+    tags=['auth']
 )
 
 
 @app.on_event("startup")
 async def startup():
-    # Используем соединение напрямую для выполнения синхронной операции
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
