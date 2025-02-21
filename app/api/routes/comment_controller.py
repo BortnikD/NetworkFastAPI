@@ -1,13 +1,12 @@
-import logging
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
 from app.database.models.user import User
-from app.dependecies.auth import get_current_active_user
-from app.dependecies.db import get_db
-from app.schemas.pagination import CommentPagination, PaginatedResponse
-from app.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.api.dependencies.auth import get_current_active_user
+from app.api.dependencies.db import get_db
+from app.api.schemas.pagination import CommentPagination, PaginatedResponse
+from app.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.services.comment_service import CommentService
 
 router = APIRouter(

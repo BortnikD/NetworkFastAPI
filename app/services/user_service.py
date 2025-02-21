@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status
 
 from app.database.models.user import User
-from app.schemas.user import UserCreate, UserPublic
+from app.api.schemas.user import UserCreate, UserPublic
 from app.repositories.user_repository import UserRepository
 
 

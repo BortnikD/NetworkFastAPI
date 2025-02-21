@@ -1,5 +1,4 @@
 import logging
-
 from fastapi import HTTPException
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError

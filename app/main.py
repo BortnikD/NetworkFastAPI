@@ -1,10 +1,10 @@
 import logging
 from fastapi import FastAPI
 
-from app.api.v1.routes import base_controller
+from app.api.routes import base_controller
 from app.database.models.base import Base
 from app.database.database import engine
-from app.dependecies import auth
+from app.api.dependencies import auth
 
 logging.basicConfig(
     level=logging.INFO,

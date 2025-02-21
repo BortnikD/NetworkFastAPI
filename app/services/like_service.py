@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models.like import Like
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.pagination import PaginatedResponse
 from app.repositories.like_repository import LikeRepository
 
 

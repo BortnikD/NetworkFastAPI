@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.comment_repository import CommentRepository
 from app.database.models.comment import Comment
-from app.schemas.comment import CommentCreate, CommentUpdate
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.comment import CommentCreate, CommentUpdate
+from app.api.schemas.pagination import PaginatedResponse
 
 
 class CommentService:

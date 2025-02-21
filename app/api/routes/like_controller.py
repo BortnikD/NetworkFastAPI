@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Query, Body
+from fastapi import APIRouter, Query
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
 from app.database.models.user import User
-from app.dependecies.db import get_db
-from app.dependecies.auth import get_current_active_user
+from app.api.dependencies.db import get_db
+from app.api.dependencies.auth import get_current_active_user
 from app.services.like_service import LikeService
-from app.schemas.pagination import LikePagination, PaginatedResponse
-from app.schemas.like import LikePublic, LikeCreate
+from app.api.schemas.pagination import LikePagination, PaginatedResponse
+from app.api.schemas.like import LikePublic, LikeCreate
 
 router = APIRouter(
     prefix='/likes'

@@ -1,12 +1,11 @@
-import logging
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.database.models.post import Post
-from app.schemas.post import PostCreate, PostPublic, PostUpdate
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.post import PostCreate, PostPublic, PostUpdate
+from app.api.schemas.pagination import PaginatedResponse
 from app.core.config import BASE_URL
 
 

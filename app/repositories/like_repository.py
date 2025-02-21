@@ -6,8 +6,8 @@ from sqlalchemy.future import select
 
 from app.core.config import BASE_URL
 from app.database.models.like import Like
-from app.schemas.like import LikePublic
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.like import LikePublic
+from app.api.schemas.pagination import PaginatedResponse
 
 
 class LikeRepository:

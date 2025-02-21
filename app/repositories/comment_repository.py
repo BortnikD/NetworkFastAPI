@@ -4,9 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.database.models.comment import Comment
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.pagination import PaginatedResponse
 from app.core.config import BASE_URL
 
 

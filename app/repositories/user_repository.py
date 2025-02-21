@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from passlib.context import CryptContext
 
 from app.database.models.user import User
-from app.schemas.user import UserCreate, UserPublic
-from app.schemas.pagination import PaginatedResponse
+from app.api.schemas.user import UserCreate, UserPublic
+from app.api.schemas.pagination import PaginatedResponse
 from app.core.config import BASE_URL
 
 

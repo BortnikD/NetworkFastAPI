@@ -1,15 +1,14 @@
-import logging
 import os
 import shutil
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Path
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from starlette.responses import FileResponse
 
 from app.database.models.user import User
-from app.dependecies.db import get_db
-from app.dependecies.auth import get_current_user
+from app.api.dependencies.db import get_db
+from app.api.dependencies.auth import get_current_user
 from app.services.image_service import ImageService
-from app.schemas.image import Image
+from app.api.schemas.image import Image
 from app.core.config import POSTS_IMAGES_DIR, BASE_URL
 
 router = APIRouter(
