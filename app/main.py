@@ -3,19 +3,12 @@ from fastapi import FastAPI
 
 from app.core.logger import setup_logging
 from app.core.config import ALLOWED_HOSTS
-from app.core.middlewares.cors import setup_cors
+from app.middlewares.cors import setup_cors
 from app.api.routes import route, auth_controller
 from app.database.models.base import Base
 from app.database.database import engine
-<<<<<<< HEAD
-=======
-from app.core.config import ALLOWED_HOSTS
-from app.middlewares.cors import setup_cors
-from app.core.logger import setup_logging
->>>>>>> a1fb7ccc10198614522ad71b6e3c847b03794ccf
 
 setup_logging(logging.INFO)
-
 app = FastAPI()
 setup_cors(app, ALLOWED_HOSTS)
 route.include_routers()
