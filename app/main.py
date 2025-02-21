@@ -4,7 +4,7 @@ from app.api.routes import route, auth_controller
 from app.database.models.base import Base
 from app.database.database import engine
 from app.core.config import ALLOWED_HOSTS
-from app.core.middlewares.cors import setup_cors
+from app.middlewares.cors import setup_cors
 from app.core.logger import setup_logging
 
 setup_logging()
