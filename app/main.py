@@ -1,20 +1,16 @@
-import logging
 from fastapi import FastAPI
 
 from app.api.routes import route, auth_controller
 from app.database.models.base import Base
 from app.database.database import engine
+from app.core.config import ALLOWED_HOSTS
+from app.core.middlewares.cors import setup_cors
+from app.core.logger import setup_logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s | %(asctime)s | %(name)s |  %(message)s",
-    handlers=[
-        logging.FileHandler("app/core/app.log"),
-        logging.StreamHandler()
-    ]
-)
+setup_logging()
 
 app = FastAPI()
+setup_cors(app, ALLOWED_HOSTS)
 
 app.include_router(
     route.router,

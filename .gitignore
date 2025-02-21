@@ -2,6 +2,5 @@ __pycache__
 .env
 .venv
 .idea
-('database.db',)
-app.log
+*.log 
 uploads
