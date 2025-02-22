@@ -4,6 +4,7 @@ This project is an example of how you can organize a backend for your social net
 ## Technologies
 - _FastAPI_
 - _SQLAlchemy (postgres)_
+- _alembic_
 
 
 ## Installation 
