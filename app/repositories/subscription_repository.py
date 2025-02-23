@@ -15,7 +15,7 @@ class SubscriptionRepository:
         self.db = db
 
     async def get_subscriptions_by_user_id(self, current_user_id: int, offset: int, limit: int) -> PaginatedResponse:
-        count_result = await self.db.execute(select(func.count().filter(Subscription.follower_user_id == current_user_id)))
+        count_result = await self.db.execute(select(func.count().filter(Subscription.follower_id == current_user_id)))
         count = count_result.scalars().first()
 
         result = await self.db.execute(select(Subscription)
@@ -27,7 +27,7 @@ class SubscriptionRepository:
 
         if subscriptions:
             subscriptions = [SubscriptionPublic.from_orm(sub) for sub in subscriptions]
-            prev, next = get_prev_next_pages(offset, limit, count, 'posts')
+            prev, next = get_prev_next_pages(offset, limit, count, 'subscriptions')
 
             logging.info(f'Subscriptions by user_id={current_user_id} issued')
             return PaginatedResponse(
