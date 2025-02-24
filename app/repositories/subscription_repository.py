@@ -1,12 +1,12 @@
 import logging
-from sqlalchemy import func, IntegrityError
+from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from fastapi import HTTPException
 
 from app.database.models.subscription import Subscription
-from app.api.schemas.pagination import PaginatedResponse
+from app.api.schemas.pagination import PaginatedResponse, UsersPagination
 from app.api.schemas.subsctiption import SubscriptionPublic
 from app.core.utils.pages import get_prev_next_pages
 
@@ -15,7 +15,10 @@ class SubscriptionRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_subscriptions_by_user_id(self, current_user_id: int, offset: int, limit: int) -> PaginatedResponse:
+    async def get_subscriptions_by_user_id(self, 
+                                           current_user_id: int, 
+                                           offset: int, 
+                                           limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count().filter(Subscription.follower_id == current_user_id)))
         count = count_result.scalars().first()
 
