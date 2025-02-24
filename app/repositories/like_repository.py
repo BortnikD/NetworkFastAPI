@@ -43,7 +43,7 @@ class LikeRepository:
         likes = result.scalars().all()
 
         if likes:
-            likes = [LikePublic.from_orm(like) for like in likes]
+            likes = [LikePublic.model_validate(like) for like in likes]
             prev, next = get_prev_next_pages(offset, limit, count, 'likes')
             logging.info(f'likes by post_id={post_id} issued, total_count={count}')
 

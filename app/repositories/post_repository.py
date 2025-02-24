@@ -21,7 +21,7 @@ class PostRepository:
         posts = result.scalars().all()
         
         if posts:
-            posts = [PostPublic.from_orm(post) for post in posts]
+            posts = [PostPublic.model_validate(post) for post in posts]
             prev, next = get_prev_next_pages(offset, limit, total_count, 'posts')
 
             return PaginatedResponse(

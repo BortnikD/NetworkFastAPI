@@ -38,7 +38,7 @@ class CommentRepository:
         comments = result.scalars().all()
         
         if comments:
-            comments = [CommentPublic.from_orm(comment) for comment in comments]
+            comments = [CommentPublic.model_validate(comment) for comment in comments]
             prev, next = get_prev_next_pages(offset, limit, comments_count, 'comments')
             logging.info(f"Fetched {len(comments)} comments for post_id = {post_id}, offset = {offset}, limit = {limit}")
             return PaginatedResponse(
