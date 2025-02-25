@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
+from fastapi import HTTPException
 
 from app.api.schemas.pagination import PaginatedResponse
 from app.database.models import Subscription
@@ -10,6 +11,8 @@ class SubscriptionService:
         self.subscription_repository = SubscriptionRepository(db)
 
     async def create_subscription(self, follower_id: int, followed_user_id: int) -> PaginatedResponse:
+        if follower_id == followed_user_id:
+            raise HTTPException(status_code=409, detail='You cannot subscribe to yourself')
         return await self.subscription_repository.create_subscription(follower_id, followed_user_id)
     
     async def get_subscriptions_by_user_id(self, user_id: int, offset: int, limit: int) -> Subscription:

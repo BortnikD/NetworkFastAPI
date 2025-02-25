@@ -59,9 +59,10 @@ class SubscriptionRepository:
             logging.info(f'Subscription created follower_id={current_user_id} followed_user_id={followed_user_id}')
             return subscription
         except IntegrityError:
-            await self.db.rollback
+            await self.db.rollback()
             logging.error('Error creating subscription')
             raise HTTPException(status_code=409, detail='Subscription already exists')
+
 
 
     async def delete_subscription_by_id(self, subscription_id: int, current_user_id: int) -> None:
