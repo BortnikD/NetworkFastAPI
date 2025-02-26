@@ -45,7 +45,7 @@ class UserRepository:
         except IntegrityError:
             await self.db.rollback()
             logging.error(f"An error occurred while creating user")
-            raise ValueError("Пользователь с таким email или username уже существует.")
+            raise HTTPException(status_code=400, detail="Пользователь с таким email или username уже существует.")
         except SQLAlchemyError as e:
             await self.db.rollback()
             logging.error(str(e))
