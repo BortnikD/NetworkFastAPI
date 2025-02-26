@@ -1,5 +1,6 @@
 import logging
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -13,6 +14,7 @@ from app.api.schemas.pagination import PaginatedResponse
 class CommentRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
+
 
     async def create_comment(self, comment: CommentCreate, current_user_id: int) -> Comment:
         db_comment = Comment(
@@ -31,25 +33,28 @@ class CommentRepository:
             logging.error(f'Due to some error, the comment with post_id = {comment.post_id} and user_id = {current_user_id} was not created.')
             raise ValueError("Ошибка при попытке создать комментарий")
         
+        
     async def get_comments_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
-        result = await self.db.execute(select(Comment).filter(Comment.post_id == post_id))
-        comments_count = len(result.scalars().all())
+        count_result = await self.db.execute(select(func.count()).filter(Comment.post_id == post_id))
+        count = count_result.scalar().first()
+        
         result = await self.db.execute(select(Comment).filter(Comment.post_id == post_id).offset(offset).limit(limit))
         comments = result.scalars().all()
         
         if comments:
             comments = [CommentPublic.model_validate(comment) for comment in comments]
-            prev, next = get_prev_next_pages(offset, limit, comments_count, 'comments')
+            prev, next = get_prev_next_pages(offset, limit, count, 'comments')
             logging.info(f"Fetched {len(comments)} comments for post_id = {post_id}, offset = {offset}, limit = {limit}")
             return PaginatedResponse(
-                count=comments_count,
+                count=count,
                 prev=prev,
                 next=next,
                 results=comments
             )
         else:
             logging.warning(f"No comments found for post_id = {post_id}")
-            return PaginatedResponse(count=comments_count)
+            return PaginatedResponse(count=count)
+        
         
     async def update_comment(self, comment: CommentUpdate, current_user_id: int) -> Comment:
         result = await self.db.execute(select(Comment).filter(Comment.id == comment.id))
@@ -71,6 +76,7 @@ class CommentRepository:
             await self.db.rollback() 
             logging.error(f"IntegrityError while updating comment with id = {comment.id}")
             raise ValueError(f"Problem with updating comment id = {comment.id}")
+
 
     async def delete_comment(self, comment_id: int, current_user_id: int):
         result = await self.db.execute(select(Comment).filter(Comment.id == comment_id))

@@ -11,6 +11,7 @@ class ImageRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+
     async def upload_image(self, src: str, user_id: int, post_id: int) -> Image | None:
         if not src:
             logging.error('Upload failed: src is empty')
@@ -34,6 +35,7 @@ class ImageRepository:
             await self.db.rollback()
             logging.error(f"Database error: {str(e)}")
             raise HTTPException(status_code=500, detail="Internal server error")
+
 
     async def get_sources_by_post_id(self, post_id: int) -> list[Image] | None:
         result = await self.db.execute(select(Image).where(Image.post_id == post_id))

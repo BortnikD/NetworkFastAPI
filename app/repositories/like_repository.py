@@ -1,5 +1,6 @@
 import logging
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -14,6 +15,7 @@ from app.api.schemas.pagination import PaginatedResponse
 class LikeRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
+
 
     async def create_like(self, post_id: int, current_user_id: int):
         like = Like(
@@ -36,9 +38,10 @@ class LikeRepository:
         except SQLAlchemyError as e:
             logging.error(e)
 
+
     async def get_likes_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
-        result = await self.db.execute(select(Like).filter(Like.post_id == post_id))
-        count = len(result.scalars().all())
+        count_result = await self.db.execute(select(func.count()).filter(Like.post_id == post_id))
+        count = count_result.scalar().first()
         result = await self.db.execute(select(Like).filter(Like.post_id == post_id).offset(offset).limit(limit))
         likes = result.scalars().all()
 
@@ -58,6 +61,7 @@ class LikeRepository:
             return PaginatedResponse(
                 count=count
             )
+
 
     async def delete_like(self, like_id: int, current_user_id: int):
         result = await self.db.execute(select(Like).filter(Like.id == like_id))

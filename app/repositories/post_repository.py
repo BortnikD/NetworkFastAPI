@@ -1,7 +1,8 @@
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models.post import Post
 from app.api.schemas.post import PostCreate, PostPublic, PostUpdate
@@ -12,26 +13,28 @@ from app.core.utils.pages import get_prev_next_pages
 class PostRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
+        
 
     async def get_posts(self, offset: int, limit: int, order_by: Post = Post.created_at.desc()) -> PaginatedResponse:
-        result = await self.db.execute(select(Post).order_by(order_by))
-        total_count = len(result.scalars().all())
+        count_result = await self.db.execute(select(func.count()))
+        count = count_result.scalar().first()
         
         result = await self.db.execute(select(Post).offset(offset).limit(limit).order_by(order_by))
         posts = result.scalars().all()
         
         if posts:
             posts = [PostPublic.model_validate(post) for post in posts]
-            prev, next = get_prev_next_pages(offset, limit, total_count, 'posts')
+            prev, next = get_prev_next_pages(offset, limit, count, 'posts')
 
             return PaginatedResponse(
-                count=total_count,
+                count=count,
                 prev=prev,
                 next=next,
                 results=posts
             )
         else:
-            return PaginatedResponse(count=total_count)
+            return PaginatedResponse(count=count)
+        
         
     async def get_post_by_id(self, post_id: int) -> Post:
         result = await self.db.execute(select(Post).filter(Post.id == post_id))
@@ -54,6 +57,7 @@ class PostRepository:
             await self.db.rollback()  
             raise ValueError("Ошибка при попытке создания поста в бд")
 
+
     async def delete_post(self, post_id: int, user_id: int) -> None:
         result = await self.db.execute(select(Post).filter(Post.id == post_id))
         post_to_delete = result.scalars().first()
@@ -67,6 +71,7 @@ class PostRepository:
         except SQLAlchemyError:
             await self.db.rollback() 
             raise ValueError(f'Ошибка при удалении поста с post_id={post_id}')
+        
         
     async def update_post(self, post: PostUpdate, user_id: int) -> Post:
         result = await self.db.execute(select(Post).filter(Post.id == post.id))

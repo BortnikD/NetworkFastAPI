@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from fastapi import HTTPException
 
 from app.database.models.subscription import Subscription
-from app.api.schemas.pagination import PaginatedResponse, UsersPagination
+from app.api.schemas.pagination import PaginatedResponse
 from app.api.schemas.subsctiption import SubscriptionPublic
 from app.core.utils.pages import get_prev_next_pages
 
@@ -14,6 +14,7 @@ from app.core.utils.pages import get_prev_next_pages
 class SubscriptionRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
+
 
     async def get_subscriptions_by_user_id(self, 
                                            current_user_id: int, 
@@ -45,7 +46,6 @@ class SubscriptionRepository:
             return PaginatedResponse(count=count)
 
 
-
     async def create_subscription(self, current_user_id: int, followed_user_id: int) -> Subscription | None:
         subscription = Subscription(
             follower_id=current_user_id,
@@ -62,7 +62,6 @@ class SubscriptionRepository:
             await self.db.rollback()
             logging.error('Error creating subscription')
             raise HTTPException(status_code=409, detail='Subscription already exists')
-
 
 
     async def delete_subscription_by_id(self, subscription_id: int, current_user_id: int) -> None:
