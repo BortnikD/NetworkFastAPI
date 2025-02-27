@@ -1,5 +1,5 @@
 # Example of a backend for a network
-This project is an example of how you can organize a backend for your social network
+This project is an simple example of how you can organize a backend for your social network
 
 ## Technologies
 - _FastAPI_
