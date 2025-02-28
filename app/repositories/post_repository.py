@@ -18,7 +18,7 @@ class PostRepository:
 
     async def get_posts(self, offset: int, limit: int, order_by: Post = Post.created_at.desc()) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()))
-        count = count_result.scalar().first()
+        count = count_result.scalar()
         
         result = await self.db.execute(select(Post).offset(offset).limit(limit).order_by(order_by))
         posts = result.scalars().all()
