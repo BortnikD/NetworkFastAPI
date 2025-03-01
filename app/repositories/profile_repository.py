@@ -45,13 +45,4 @@ class ProfileRepository:
 
         logging.info(f'Profile user with id={user_id} found successfully')
 
-        return ProfilePublic(
-            id=profile_data.id,
-            username=profile_data.username,
-            email=profile_data.email,
-            first_name=profile_data.first_name,
-            last_name=profile_data.last_name,
-            is_active=profile_data.is_active,
-            followers_count=profile_data.followers_count,
-            followed_count=profile_data.followed_count
-        )
+        return ProfilePublic(**profile_data._mapping)
