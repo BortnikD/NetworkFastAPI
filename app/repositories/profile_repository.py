@@ -1,8 +1,6 @@
 import logging
 from fastapi import HTTPException
 from sqlalchemy import func, case, distinct
-from sqlalchemy.sql import label
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
