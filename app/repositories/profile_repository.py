@@ -17,16 +17,6 @@ class ProfileRepository:
         
         
     def __profile_query(self, user_id: int):
-        follower_case = case(
-            (Subscription.follower_id == user_id, Subscription.id),
-            else_=None
-        )
-
-        followed_case = case(
-            (Subscription.followed_user_id == user_id, Subscription.id),
-            else_=None
-        )
-
         query = (
             select(
                 User.id,
@@ -35,8 +25,8 @@ class ProfileRepository:
                 User.first_name,
                 User.last_name,
                 User.is_active,
-                func.count(distinct(follower_case)).label("followers_count"),
-                func.count(distinct(followed_case)).label("followed_count"),
+                func.count(distinct(Subscription.follower_id)).filter(Subscription.followed_user_id == user_id).label("followers_count"),
+                func.count(distinct(Subscription.followed_user_id)).filter(Subscription.follower_id == user_id).label("followed_count"),
             )
             .outerjoin(Subscription, (Subscription.follower_id == user_id) | (Subscription.followed_user_id == user_id))
             .filter(User.id == user_id)
