@@ -8,6 +8,7 @@ from . import (
     like_controller, 
     image_controller,
     subscription_controller,
+    profile_controller,
 )
 
 router = APIRouter()
@@ -21,6 +22,7 @@ def include_routers():
         router.include_router(like_controller.router, tags=['likes'])
         router.include_router(image_controller.router, tags=['images'])
         router.include_router(subscription_controller.router, tags=['subscriptions'])
+        router.include_router(profile_controller.router, tags=['profiles'])
         logging.info('All routers are configured')
     except Exception as e:
         logging.error(f"Failed to configure routers: {e}")

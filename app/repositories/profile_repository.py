@@ -44,6 +44,7 @@ class ProfileRepository:
             .filter(User.id == user_id)
             .group_by(User.id)
         )
+        return query
         
 
     async def get_profile_by_id(self, user_id: int) -> ProfilePublic:
