@@ -17,8 +17,8 @@ class ProfileRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
         
-
-    async def _get_subscriptions(self, user_id: int):
+        
+    def __profile_query(self, user_id: int):
         follower_case = case(
             (Subscription.follower_id == user_id, Subscription.id),
             else_=None
@@ -29,37 +29,40 @@ class ProfileRepository:
             else_=None
         )
 
-        subs_result = await self.db.execute(select(
-            label('followers_count', func.count(distinct(follower_case))),
-            label('followed_count', func.count(distinct(followed_case)))
-        ).select_from(Subscription))
-        subscriptions = subs_result.fetchone()
+        query = (
+            select(
+                User.id,
+                User.username,
+                User.email,
+                User.first_name,
+                User.last_name,
+                User.is_active,
+                func.count(distinct(follower_case)).label("followers_count"),
+                func.count(distinct(followed_case)).label("followed_count"),
+            )
+            .outerjoin(Subscription, (Subscription.follower_id == user_id) | (Subscription.followed_user_id == user_id))
+            .filter(User.id == user_id)
+            .group_by(User.id)
+        )
         
-        if not subscriptions:
-            logging.warning(f'User with id={user_id} subscriptions not found')
-            raise HTTPException(status_code=404, detail=f'User with id={user_id} subscriptions not found')
-        
-        return subscriptions
-    
-    
+
     async def get_profile_by_id(self, user_id: int) -> ProfilePublic:
-        result = await self.db.execute(select(User).filter(User.id == user_id))
-        user = result.fetchone()
-        if not user:
-            logging.warning(f'user with id={user_id} is not found')
-            raise HTTPException(status_code=404, detail=f'user with id={user_id} is not found')
-        logging.info(f'user with id = {user_id} is found')
-        
-        subscriptions = await self._get_subscriptions(user.id)
-        logging.info(f'Profile user with id={user.id} found successfully')
-        
+        result = await self.db.execute(self.__profile_query(user_id))
+        profile_data = result.fetchone()
+
+        if not profile_data:
+            logging.warning(f'User with id={user_id} not found')
+            raise HTTPException(status_code=404, detail=f'User with id={user_id} not found')
+
+        logging.info(f'Profile user with id={user_id} found successfully')
+
         return ProfilePublic(
-            id=user.id,
-            username=user.username,
-            email=user.email,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            is_active=user.is_active,
-            followers_count=subscriptions.followers_count,
-            followed_count=subscriptions.followed_count
+            id=profile_data.id,
+            username=profile_data.username,
+            email=profile_data.email,
+            first_name=profile_data.first_name,
+            last_name=profile_data.last_name,
+            is_active=profile_data.is_active,
+            followers_count=profile_data.followers_count,
+            followed_count=profile_data.followed_count
         )
