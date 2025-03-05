@@ -2,6 +2,8 @@ __pycache__
 .env
 .venv
 .idea
+*.log
+.git
+.gitignore
 .postgres
-*.log 
 uploads

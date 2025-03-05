@@ -7,13 +7,7 @@ load_dotenv()
 BASE_URL = 'http://127.0.0.1:8000'
 
 # set up data for connecting to the database
-DATABASE = os.getenv('DATABASE')
-USER = os.getenv('USER')
-PASSWORD = os.getenv('PASSWORD')
-HOST = os.getenv('HOST')
-PORT = os.getenv('PORT')
-
-DB_URL = f'postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
+DB_URL = os.getenv('DB_URL')
 
 # catalogs for media data
 # created in the root dir

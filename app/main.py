@@ -37,3 +37,4 @@ async def shutdown():
     # Закрываем соединение с базой данных при завершении работы
     await engine.dispose()
     logging.info("The application is disabled")
+    

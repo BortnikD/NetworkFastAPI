@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DATABASE}
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+    restart: always
+    volumes:
+      - .postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER} -d ${DATABASE}"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
+  app:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_URL=postgresql+asyncpg://${USER}:${PASSWORD}@db:5432/${DATABASE}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_network
+    volumes:
+      - ./app:/src/app
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+networks:
+  app_network:
+    driver: bridge
