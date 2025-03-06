@@ -41,7 +41,7 @@ class LikeRepository:
 
     async def get_likes_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()).filter(Like.post_id == post_id))
-        count = count_result.scalar().first()
+        count = count_result.scalar()
         result = await self.db.execute(select(Like).filter(Like.post_id == post_id).offset(offset).limit(limit))
         likes = result.scalars().all()
 

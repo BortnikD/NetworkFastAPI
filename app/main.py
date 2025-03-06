@@ -5,7 +5,6 @@ from app.core.logger import setup_logging
 from app.core.config import ALLOWED_HOSTS
 from app.middlewares.cors import setup_cors
 from app.api.routes import route, auth_controller
-from app.database.models.base import Base
 from app.database.database import engine
 
 setup_logging(logging.INFO)

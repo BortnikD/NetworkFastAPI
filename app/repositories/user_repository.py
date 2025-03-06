@@ -53,7 +53,7 @@ class UserRepository:
 
 
     async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
-        count_result = await self.db.execute(select(func.count()))
+        count_result = await self.db.execute(select(func.count()).select_from(User))
         count = count_result.scalar()
 
         result = await self.db.execute(select(User).offset(offset).limit(limit))
