@@ -73,7 +73,7 @@ class SubscriptionRepository:
             raise HTTPException(status_code=404, detaul="Subscription does not exist")
 
         if not subscription.follower_id == current_user_id:
-            logging.warning(f'user with id={current_user_id} tryed to delete subscription id={subscription_id}')
+            logging.warning(f'user with id={current_user_id} tried to delete subscription id={subscription_id}')
             raise HTTPException(status_code=403, detail='You have not access rights')
 
         try:

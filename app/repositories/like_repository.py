@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.core.config import BASE_URL
 from app.core.utils.pages import get_prev_next_pages
 from app.database.models.like import Like
 from app.api.schemas.like import LikePublic

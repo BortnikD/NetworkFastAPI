@@ -80,7 +80,7 @@ class CommentRepository:
 
     async def delete_comment(self, comment_id: int, current_user_id: int):
         result = await self.db.execute(select(Comment).filter(Comment.id == comment_id))
-        comment = result.scalars().first()
+        comment = result.scalars()
 
         if not comment:
             logging.error(f"Comment with id = {comment_id} not found for deletion.")
