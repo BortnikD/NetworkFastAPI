@@ -5,7 +5,9 @@ from app.api.dependencies.db import get_db
 from app.api.schemas.profile import ProfilePublic
 from app.services.profile_service import ProfileService
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/profiles'
+)
 
 
 @router.get('/{user_id}')

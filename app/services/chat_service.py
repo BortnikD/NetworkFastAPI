@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
 
-from api.schemas.chat import ChatCreate
-from api.schemas.pagination import PaginatedResponse
+from app.api.schemas.chat import ChatCreate
+from app.api.schemas.pagination import PaginatedResponse
 from app.repositories.chat_repositoty import ChatRepository
 from app.repositories.chat_message_repository import ChatMessageRepository
 from app.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate
@@ -20,6 +21,13 @@ class ChatService:
         return await self.chat_repository.create_chat(chat_create)
 
 
+    async def is_user_chat(self, user_id: int, chat_id: int) -> bool:
+        chat = await self.chat_repository.get_chat_by_id(chat_id)
+        if not chat:
+            return False
+        return user_id in (chat.first_user_id, chat.second_user_id)
+
+
     async def delete_chat(self, chat_id: int, current_user_id: int) -> None:
         await self.chat_repository.delete_chat(chat_id, current_user_id)
 
@@ -28,17 +36,18 @@ class ChatService:
         return await self.chat_repository.get_chats_by_user_id(current_user_id, offset, limit)
 
 
-    async def get_chat_messages(self, chat_id: int, offset: int, limit: int) -> PaginatedResponse:
-        return await self.message_repository.get_messages_by_chat_id(chat_id, offset, limit)
+    async def get_chat_messages(self, user_id: int, chat_id: int, offset: int, limit: int) -> PaginatedResponse | None:
+        if self.is_user_chat(user_id, chat_id):
+            return await self.message_repository.get_messages_by_chat_id(chat_id, offset, limit)
+        else:
+            raise HTTPException(status_code=403, detail="You have no access rights")
 
 
     async def create_message(self, message: ChatMessageCreate) -> ChatMessage | None:
         try:
             return await self.message_repository.create_message(message)
         except ChatDoesNotExist:
-            # Инициализируем чат, если он не существует
             await self.init_chat(message.first_user_id, message.second_user_id)
-            # Пытаемся снова создать сообщение
             return await self.message_repository.create_message(message)
 
 

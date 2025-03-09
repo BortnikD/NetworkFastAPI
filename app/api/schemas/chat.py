@@ -6,6 +6,9 @@ class ChatBase(BaseModel):
     first_user_id: int
     second_user_id: int
 
+    class Config:
+        from_attributes = True
+
 
 class ChatCreate(ChatBase):
     pass
@@ -17,6 +20,14 @@ class ChatPublic(ChatBase):
 
 class ChatMessageBase(BaseModel):
     text: str
+
+    class Config:
+        from_attributes = True
+
+
+class ChatMessageCreateLite(ChatMessageBase):
+    chat_id: int
+    second_user_id: int
 
 
 class ChatMessageCreate(ChatMessageBase):

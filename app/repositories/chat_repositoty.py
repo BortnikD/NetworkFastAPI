@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.schemas.chat import ChatCreate
 from app.database.models.chat import Chat
 from app.api.schemas.pagination import PaginatedResponse
-from core.utils.pages import get_prev_next_pages
+from app.core.utils.pages import get_prev_next_pages
 
 
 class ChatRepository:
@@ -28,6 +28,15 @@ class ChatRepository:
             await self.db.rollback()
             logging.error(f"Integrity error while creating chat: {str(e)}")
             raise HTTPException(status_code=400, detail="Error creating chat")
+
+
+    async def get_chat_by_id(self, chat_id: int) -> Chat | None:
+        chat = await self.db.get(Chat, chat_id)
+        if not chat:
+            logging.warning(f'Chat with id={chat_id} does not exist')
+            raise HTTPException(status_code=404, detail="Chat does not exist")
+        logging.info(f'Chat with id={chat_id} is found')
+        return chat
 
 
     async def get_chats_by_user_id(self, user_id: int, offset: int, limit: int) -> PaginatedResponse:

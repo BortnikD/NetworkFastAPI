@@ -1,8 +1,16 @@
 import logging
 from fastapi import APIRouter
 
-from .endpoints import comment_controller, image_controller, like_controller, post_controller, profile_controller, \
-    subscription_controller, user_controller
+from .endpoints import (
+    comment_controller,
+    image_controller,
+    like_controller,
+    post_controller,
+    profile_controller,
+    subscription_controller,
+    user_controller
+)
+from .endpoints.ws import messages_controller
 
 router = APIRouter()
 
@@ -16,6 +24,8 @@ def include_routers():
         router.include_router(image_controller.router, tags=['images'])
         router.include_router(subscription_controller.router, tags=['subscriptions'])
         router.include_router(profile_controller.router, tags=['profiles'])
+        router.include_router(messages_controller.router, tags=['messages'])
+
         logging.info('All routers are configured')
     except Exception as e:
         logging.error(f"Failed to configure routers: {e}")

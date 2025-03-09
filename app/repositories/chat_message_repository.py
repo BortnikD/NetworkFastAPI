@@ -5,9 +5,10 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.utils.pages import get_prev_next_pages
-from database.models import ChatMessage
-from app.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate
+from app.core.utils.pages import get_prev_next_pages
+from app.database.models import ChatMessage
+from app.database.models import Chat
+from app.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate, ChatMessagePublic
 from app.api.schemas.pagination import PaginatedResponse
 from app.core.exceptions.chat import ChatDoesNotExist
 
@@ -18,12 +19,17 @@ class ChatMessageRepository:
 
 
     async def create_message(self, message: ChatMessageCreate):
-        chat = await self.db.get(ChatMessage, message.chat_id)
+        chat = await self.db.get(Chat, message.chat_id)
+
         if not chat:
             logging.warning(f'Chat with id={message.chat_id} does not exist')
             raise ChatDoesNotExist("Chat does not exist")
 
-        new_message = message.model_dump()
+        new_message = ChatMessage(
+            user_id=message.first_user_id,
+            chat_id=message.chat_id,
+            text=message.text
+        )
         self.db.add(new_message)
 
         try:
@@ -48,6 +54,7 @@ class ChatMessageRepository:
                                          .where(ChatMessage.chat_id == chat_id)
                                          .offset(offset)
                                          .limit(limit))
+        messages = messages.scalars().all()
 
         prev_page, next_page = get_prev_next_pages(offset, limit, count, 'messages')
 
@@ -56,7 +63,7 @@ class ChatMessageRepository:
             count=count,
             prev=prev_page,
             next=next_page,
-            results=list(messages)
+            results=[ChatMessagePublic.model_validate(message) for message in messages]
         )
 
 
