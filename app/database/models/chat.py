@@ -26,7 +26,7 @@ class Chat(Base):
     )
 
 
-class  ChatMessage(Base):
+class ChatMessage(Base):
     __tablename__ = 'chat_messages'
 
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True)

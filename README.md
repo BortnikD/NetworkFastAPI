@@ -22,10 +22,9 @@ pip install -r requirements.txt
 ```bash
 set API_KEY "your_api_key_hex_32"
 set DATABASE "your_database_name"
-set USER "your_username"
-set HOST "your_host"
-set PORT "your_port"
-set PASSWORD "your_password"
+set POSTGRES_USER "your_username"
+set POSTGRES_PORT "your_port"
+set POSTGRES_PASSWORD "your_password"
 
 ```
 

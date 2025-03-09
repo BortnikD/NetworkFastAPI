@@ -25,7 +25,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_HOST}/${DATABASE}
+      - DB_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${DATABASE}
     depends_on:
       db:
         condition: service_healthy
