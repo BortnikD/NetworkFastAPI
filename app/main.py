@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from app.core.logger import setup_logging
 from app.core.config import ALLOWED_HOSTS
 from app.middlewares.cors import setup_cors
-from app.api.routes import route, auth_controller
+from app.api.routes import route
+from app.api.routes.endpoints import auth_controller
 from app.database.database import engine
 
 setup_logging(logging.INFO)

@@ -13,6 +13,7 @@ class Chat(Base):
     first_user_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('users.id', ondelete="CASCADE"), index=True)
     second_user_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('users.id', ondelete="CASCADE"), index=True)
 
+    # Указываем foreign_keys и устанавливаем связи
     first_user: Mapped["User"] = relationship("User", foreign_keys=[first_user_id],
                                               back_populates="chats_as_first_user")
     second_user: Mapped["User"] = relationship("User", foreign_keys=[second_user_id],
@@ -35,4 +36,4 @@ class ChatMessage(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), index=True)
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), index=True)
 
-    chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
+    chat = relationship("Chat", back_populates="messages")

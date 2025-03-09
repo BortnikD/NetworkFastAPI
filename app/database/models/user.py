@@ -25,8 +25,10 @@ class User(Base):
     images = relationship('Image', back_populates='user', cascade="all, delete")
     # following = relationship('Subscription', back_populates='follower', cascade="all, delete")
     # followers = relationship('Subscription', back_populates='followed_user', cascade="all, delete")
-    chats_as_first_user = relationship("Chat", back_populates="first_user", cascade="all, delete")
-    chats_as_second_user = relationship("Chat", back_populates="second_user", cascade="all, delete")
+    chats_as_first_user = relationship("Chat", back_populates="first_user", cascade="all, delete",
+                                       foreign_keys="[Chat.first_user_id]")
+    chats_as_second_user = relationship("Chat", back_populates="second_user", cascade="all, delete",
+                                        foreign_keys="[Chat.second_user_id]")
 
-    repr_cols = ("id", "username", "email", "date_joined")  
+    repr_cols = ("id", "username", "email", "date_joined")
     repr_cols_num = 3  

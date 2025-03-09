@@ -1,15 +1,8 @@
 import logging
 from fastapi import APIRouter
 
-from . import (
-    post_controller, 
-    user_controller, 
-    comment_controller, 
-    like_controller, 
-    image_controller,
-    subscription_controller,
-    profile_controller,
-)
+from .endpoints import comment_controller, image_controller, like_controller, post_controller, profile_controller, \
+    subscription_controller, user_controller
 
 router = APIRouter()
 

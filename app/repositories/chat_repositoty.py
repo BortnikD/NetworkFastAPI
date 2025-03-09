@@ -15,6 +15,7 @@ class ChatRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+
     async def create_chat(self, chat: ChatCreate) -> Chat:
         new_chat = Chat(**chat.model_dump())
         self.db.add(new_chat)
@@ -27,6 +28,7 @@ class ChatRepository:
             await self.db.rollback()
             logging.error(f"Integrity error while creating chat: {str(e)}")
             raise HTTPException(status_code=400, detail="Error creating chat")
+
 
     async def get_chats_by_user_id(self, user_id: int, offset: int, limit: int) -> PaginatedResponse:
         chat_filter = or_(Chat.first_user_id == user_id, Chat.second_user_id == user_id)
@@ -72,5 +74,6 @@ class ChatRepository:
             await self.db.commit()
             logging.info(f'chat id={chat_id} deleted')
         except SQLAlchemyError as e:
+            await self.db.rollback()
             logging.error(f'some error by delete chat with id={chat_id}, error = {e}')
             raise HTTPException(status_code=400, detail="error while deleting chat")
