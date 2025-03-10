@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models.post import Post
-from app.adapters.api.schemas.post import PostCreate, PostUpdate
-from app.adapters.api.schemas.pagination import PaginatedResponse
+from app.core.dto.post import PostCreate, PostUpdate
+from app.core.dto.pagination import PaginatedResponse
 from app.adapters.repositories.post_repository import PostRepository
 
 

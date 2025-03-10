@@ -1,4 +1,4 @@
-from app.adapters.api.schemas.user import UserPublic
+from app.core.dto.user import UserPublic
 
 
 class ProfilePublic(UserPublic):

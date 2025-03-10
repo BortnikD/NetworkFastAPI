@@ -10,8 +10,8 @@ from app.core.services.user_service import UserService
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.infrastructure.settings.security import create_access_token, verify_password
 from app.infrastructure.settings.config import ACCESS_TOKEN_EXPIRE_DAYS
-from app.adapters.api.schemas.user import UserPublic
-from app.adapters.api.schemas.auth import Token
+from app.core.dto import UserPublic
+from app.core.dto.auth import Token
 
 router = APIRouter()
 

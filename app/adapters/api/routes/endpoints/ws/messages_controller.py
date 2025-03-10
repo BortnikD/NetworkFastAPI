@@ -5,8 +5,8 @@ from typing import Annotated
 from app.core.services.chat_service import ChatService
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.adapters.api.dependencies.db import get_db
-from app.adapters.api.schemas.chat import ChatMessageCreateLite, ChatMessageCreate, ChatMessagePublic
-from app.adapters.api.schemas.pagination import PaginatedResponse, MessagePagination
+from app.core.dto.chat import ChatMessageCreateLite, ChatMessageCreate, ChatMessagePublic
+from app.core.dto.pagination import PaginatedResponse, MessagePagination
 from app.infrastructure.database.models import User
 
 router = APIRouter(

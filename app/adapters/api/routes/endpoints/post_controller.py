@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
-from app.adapters.api.schemas.user import UserPublic
-from app.adapters.api.schemas.post import PostCreate, PostPublic, PostUpdate
-from app.adapters.api.schemas.pagination import PaginatedResponse, PostPagination
+from app.core.dto import UserPublic
+from app.core.dto.post import PostCreate, PostPublic, PostUpdate
+from app.core.dto.pagination import PaginatedResponse, PostPagination
 from app.core.services.post_service import PostService
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.dependencies.auth import get_current_active_user

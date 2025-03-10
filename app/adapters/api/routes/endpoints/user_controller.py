@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
-from app.adapters.api.schemas.pagination import UsersPagination, PaginatedResponse
-from app.adapters.api.schemas.user import UserCreate, UserPublic
+from app.core.dto.pagination import UsersPagination, PaginatedResponse
+from app.core.dto import UserCreate, UserPublic
 from app.core.services.user_service import UserService
 from app.adapters.api.dependencies.db import get_db
 

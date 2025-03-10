@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
-from app.adapters.api.schemas.chat import ChatCreate
-from app.adapters.api.schemas.pagination import PaginatedResponse
+from app.core.dto.chat import ChatCreate
+from app.core.dto.pagination import PaginatedResponse
 from app.adapters.repositories.chat_repositoty import ChatRepository
 from app.adapters.repositories.chat_message_repository import ChatMessageRepository
-from app.adapters.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate
+from app.core.dto.chat import ChatMessageCreate, ChatMessageUpdate
 from app.infrastructure.database.models.chat import Chat, ChatMessage
 from app.core.exceptions.chat import ChatDoesNotExist
 

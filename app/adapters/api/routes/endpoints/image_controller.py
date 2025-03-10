@@ -8,7 +8,7 @@ from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.dependencies.auth import get_current_user
 from app.core.services.image_service import ImageService
-from app.adapters.api.schemas.image import Image
+from app.core.dto.image import Image
 from app.infrastructure.settings.config import POSTS_IMAGES_DIR, BASE_URL
 
 router = APIRouter(

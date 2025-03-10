@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
 from fastapi import HTTPException
 
-from app.adapters.api.schemas.pagination import PaginatedResponse
+from app.core.dto.pagination import PaginatedResponse
 from app.infrastructure.database.models import Subscription
 from app.adapters.repositories.subscription_repository import SubscriptionRepository
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.adapters.api.dependencies.db import get_db
-from app.adapters.api.schemas.profile import ProfilePublic
+from app.core.dto.profile import ProfilePublic
 from app.core.services.profile_service import ProfileService
 
 router = APIRouter(

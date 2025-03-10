@@ -7,8 +7,8 @@ from sqlalchemy.future import select
 
 from app.adapters.repositories.utils.pages import get_prev_next_pages
 from app.infrastructure.database.models.like import Like
-from app.adapters.api.schemas.like import LikePublic
-from app.adapters.api.schemas.pagination import PaginatedResponse
+from app.core.dto.like import LikePublic
+from app.core.dto.pagination import PaginatedResponse
 
 
 class LikeRepository:

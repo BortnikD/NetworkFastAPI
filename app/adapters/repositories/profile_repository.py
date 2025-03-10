@@ -8,7 +8,7 @@ from app.infrastructure.database.models import (
     User, 
     Subscription
 )
-from app.adapters.api.schemas.profile import ProfilePublic
+from app.core.dto.profile import ProfilePublic
 
 
 class ProfileRepository:

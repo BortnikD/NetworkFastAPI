@@ -5,8 +5,8 @@ from typing import Annotated
 from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.adapters.api.dependencies.db import get_db
-from app.adapters.api.schemas.pagination import CommentPagination, PaginatedResponse
-from app.adapters.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.core.dto.pagination import CommentPagination, PaginatedResponse
+from app.core.dto.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.core.services.comment_service import CommentService
 
 router = APIRouter(

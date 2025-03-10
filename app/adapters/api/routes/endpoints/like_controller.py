@@ -7,8 +7,8 @@ from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.core.services.like_service import LikeService
-from app.adapters.api.schemas.pagination import LikePagination, PaginatedResponse
-from app.adapters.api.schemas.like import LikePublic, LikeCreate
+from app.core.dto.pagination import LikePagination, PaginatedResponse
+from app.core.dto.like import LikePublic, LikeCreate
 
 router = APIRouter(
     prefix='/likes'

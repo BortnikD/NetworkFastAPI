@@ -1,12 +1,17 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
+from datetime import datetime
 
 
-@dataclass
-class CreateLikeDTO:
-    user_id: int
+class LikeBase(BaseModel):
     post_id: int
 
 
-@dataclass
-class GetLikeDTO:
+class LikeCreate(LikeBase):
+    pass
+
+
+class LikePublic(LikeBase):
     id: int
+    user_id: int
+    created_at: datetime
+

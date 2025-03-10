@@ -1,19 +1,26 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
 
 
-@dataclass
-class CreatePostDTO:
-    user_id: int
+class PostBase(BaseModel):
     text_content: str
-    is_repost: bool = False
+    
+    class Config: 
+        from_attributes = True
 
 
-@dataclass
-class GetPostsDTO:
+class PostCreate(PostBase):
     user_id: int
 
-
-@dataclass
-class UpdatePostDTO:
+ 
+class PostPublic(PostBase):
     id: int
-    text_content: str
+    user_id: int
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+    is_repost: Optional[bool] 
+
+
+class PostUpdate(PostBase):
+    id: int
