@@ -1,8 +1,8 @@
 import logging
 from fastapi import FastAPI
 
-from app.core.logger import setup_logging
-from app.core.config import ALLOWED_HOSTS
+from app.infrastructure.settings.logger import setup_logging
+from app.infrastructure.settings.config import ALLOWED_HOSTS
 from app.middlewares.cors import setup_cors
 from app.adapters.api.routes import route
 from app.adapters.api.routes.endpoints import auth_controller

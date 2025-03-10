@@ -1,4 +1,4 @@
-from app.core.config import BASE_URL
+from app.infrastructure.settings.config import BASE_URL
 
 
 def get_prev_next_pages(offset: int, limit: int, count: int, path_name: str) -> tuple[str | None, str | None]:

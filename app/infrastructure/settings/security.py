@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 import jwt
-from app.core.config import AUTH_KEY, HASHING_ALGORITHM
+from app.infrastructure.settings.config import AUTH_KEY, HASHING_ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto', bcrypt__default_rounds=12)
 
