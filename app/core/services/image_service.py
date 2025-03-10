@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models.image import Image
-from app.repositories.image_repository import ImageRepository
+from app.adapters.repositories.image_repository import ImageRepository
 
 
 class ImageService:

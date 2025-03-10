@@ -5,13 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.database.models.user import User
-from app.api.dependencies.db import get_db
+from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
-from app.api.dependencies.auth import get_current_active_user
+from app.adapters.api.dependencies.auth import get_current_active_user
 from app.core.security import create_access_token, verify_password
 from app.core.config import ACCESS_TOKEN_EXPIRE_DAYS
-from app.api.schemas.user import UserPublic
-from app.api.schemas.auth import Token
+from app.adapters.api.schemas.user import UserPublic
+from app.adapters.api.schemas.auth import Token
 
 router = APIRouter()
 

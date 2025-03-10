@@ -5,10 +5,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.adapters.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.core.utils.pages import get_prev_next_pages
 from app.database.models.comment import Comment
-from app.api.schemas.pagination import PaginatedResponse
+from app.adapters.api.schemas.pagination import PaginatedResponse
 
 
 class CommentRepository:

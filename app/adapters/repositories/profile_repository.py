@@ -1,6 +1,6 @@
 import logging
 from fastapi import HTTPException
-from sqlalchemy import func, case, distinct
+from sqlalchemy import func, distinct
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +8,7 @@ from app.database.models import (
     User, 
     Subscription
 )
-from app.api.schemas.profile import ProfilePublic
+from app.adapters.api.schemas.profile import ProfilePublic
 
 
 class ProfileRepository:

@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models.post import Post
-from app.api.schemas.post import PostCreate, PostUpdate
-from app.api.schemas.pagination import PaginatedResponse
-from app.repositories.post_repository import PostRepository
+from app.adapters.api.schemas.post import PostCreate, PostUpdate
+from app.adapters.api.schemas.pagination import PaginatedResponse
+from app.adapters.repositories.post_repository import PostRepository
 
 
 class PostService:

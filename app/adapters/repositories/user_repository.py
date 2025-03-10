@@ -6,8 +6,8 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models.user import User
-from app.api.schemas.user import UserCreate, UserPublic
-from app.api.schemas.pagination import PaginatedResponse
+from app.adapters.api.schemas.user import UserCreate, UserPublic
+from app.adapters.api.schemas.pagination import PaginatedResponse
 from app.core.security import pwd_context
 from app.core.utils.pages import get_prev_next_pages
 

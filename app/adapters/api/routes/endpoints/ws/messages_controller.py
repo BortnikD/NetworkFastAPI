@@ -3,10 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
 from app.core.services.chat_service import ChatService
-from app.api.dependencies.auth import get_current_active_user
-from app.api.dependencies.db import get_db
-from app.api.schemas.chat import ChatMessageCreateLite, ChatMessageCreate, ChatMessagePublic
-from app.api.schemas.pagination import PaginatedResponse, MessagePagination
+from app.adapters.api.dependencies.auth import get_current_active_user
+from app.adapters.api.dependencies.db import get_db
+from app.adapters.api.schemas.chat import ChatMessageCreateLite, ChatMessageCreate, ChatMessagePublic
+from app.adapters.api.schemas.pagination import PaginatedResponse, MessagePagination
 from app.database.models import User
 
 router = APIRouter(

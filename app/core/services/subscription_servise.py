@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
 from fastapi import HTTPException
 
-from app.api.schemas.pagination import PaginatedResponse
+from app.adapters.api.schemas.pagination import PaginatedResponse
 from app.database.models import Subscription
-from app.repositories.subscription_repository import SubscriptionRepository
+from app.adapters.repositories.subscription_repository import SubscriptionRepository
 
 
 class SubscriptionService:

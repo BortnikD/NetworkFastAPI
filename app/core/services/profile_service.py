@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from app.repositories.profile_repository import ProfileRepository
-from app.api.schemas.profile import ProfilePublic
+from app.adapters.repositories.profile_repository import ProfileRepository
+from app.adapters.api.schemas.profile import ProfilePublic
 
 
 class ProfileService:

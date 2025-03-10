@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.database.models.user import User
-from app.api.dependencies.db import get_db
+from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
 from app.core.config import AUTH_KEY, HASHING_ALGORITHM
 import jwt
