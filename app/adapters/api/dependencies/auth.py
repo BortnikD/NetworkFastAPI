@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.infrastructure.database.models.user import User
+from app.adapters.api.dependencies.services.user import get_user_service
 from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
 from app.infrastructure.settings.config import AUTH_KEY, HASHING_ALGORITHM
@@ -16,7 +17,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_current_user(
         token: Annotated[str, Depends(oauth2_scheme)],
-        db: AsyncSession = Depends(get_db)
+        service: UserService = Depends(get_user_service)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -31,7 +32,7 @@ async def get_current_user(
     except InvalidTokenError:
         raise credentials_exception
 
-    user = await UserService(db).get_user_by_email(email)
+    user = await service.get_user_by_email(email)
     if user is None:
         raise credentials_exception
     return user
