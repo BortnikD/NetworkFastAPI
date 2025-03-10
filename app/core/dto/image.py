@@ -8,3 +8,9 @@ class Image(BaseModel):
     post_id: int
     src: str
     created_at: datetime
+
+
+class CreateImage(BaseModel):
+    user_id: int
+    post_id: int
+    src: str

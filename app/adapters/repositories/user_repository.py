@@ -5,20 +5,21 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.interfaces.user import IUser
 from app.infrastructure.database.models.user import User
-from app.core.dto import UserCreate, UserPublic
+from app.core.dto.user import UserCreate, UserPublic
 from app.core.dto.pagination import PaginatedResponse
 from app.infrastructure.settings.security import pwd_context
 from app.adapters.repositories.utils.pages import get_prev_next_pages
 
 
-class UserRepository:
+class UserRepository(IUser):  # Реализуем интерфейс IUser
     def __init__(self, db: AsyncSession):
         self.db = db
         self.pwd_context = pwd_context
 
 
-    async def get_user_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).filter(User.email == email))
         if not result:
             logging.warning(f'user with email={email} does not exist')
@@ -27,7 +28,7 @@ class UserRepository:
         return result.scalars().first()
 
 
-    async def create_user(self, user_create: UserCreate) -> User:
+    async def save(self, user_create: UserCreate) -> User | None:
         hashed_password = self.pwd_context.hash(user_create.password)
         db_user = User(
             username=user_create.username,
@@ -52,7 +53,7 @@ class UserRepository:
             raise ValueError("Ошибка при создании пользователя.")
 
 
-    async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
+    async def get_all(self, offset: int, limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()).select_from(User))
         count = count_result.scalar()
 
@@ -74,6 +75,6 @@ class UserRepository:
             return PaginatedResponse(count=count)
 
 
-    async def get_user_by_id(self, id: int) -> User | None:
+    async def get_by_id(self, id: int) -> User | None:
         result = await self.db.execute(select(User).filter(User.id == id))
         return result.scalars().first()

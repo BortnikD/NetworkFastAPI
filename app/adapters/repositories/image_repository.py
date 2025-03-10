@@ -5,28 +5,30 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models.image import Image
+from app.core.dto.image import CreateImage
+from app.core.interfaces.image import IImage
 
 
-class ImageRepository:
+class ImageRepository(IImage):
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def upload(self, image: CreateImage) -> Image:
+        if not image.src:
+            logging.error("Upload failed: src is empty")
+            raise HTTPException(status_code=400, detail="File is empty")
 
-    async def upload_image(self, src: str, user_id: int, post_id: int) -> Image | None:
-        if not src:
-            logging.error('Upload failed: src is empty')
-            raise HTTPException(status_code=400, detail="file is empty")
-
-        image = Image(user_id=user_id,
-                      post_id=post_id,
-                      src=src
-                      )
-        self.db.add(image)
+        db_image = Image(
+            user_id=image.user_id,
+            post_id=image.post_id,
+            src=image.src
+        )
+        self.db.add(db_image)
         try:
             await self.db.commit()
-            await self.db.refresh(image)
-            logging.info('Image is uploaded success')
-            return image
+            await self.db.refresh(db_image)
+            logging.info("Image uploaded successfully")
+            return db_image
         except IntegrityError as e:
             await self.db.rollback()
             logging.error(f"Integrity error: {str(e)}")
@@ -36,12 +38,11 @@ class ImageRepository:
             logging.error(f"Database error: {str(e)}")
             raise HTTPException(status_code=500, detail="Internal server error")
 
-
     async def get_sources_by_post_id(self, post_id: int) -> list[Image] | None:
         result = await self.db.execute(select(Image).where(Image.post_id == post_id))
         images = result.scalars().all()
         if not images:
-            logging.warning(f'image with post_id={post_id} is not found')
-            raise HTTPException(status_code=404, detail="image is not found")
-        logging.info(f'images with post_id={post_id} is found')
+            logging.warning(f"Images with post_id={post_id} not found")
+            raise HTTPException(status_code=404, detail="Images not found")
+        logging.info(f"Images with post_id={post_id} found")
         return list(images)
