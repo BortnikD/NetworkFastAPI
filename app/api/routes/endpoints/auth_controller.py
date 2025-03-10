@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.database.models.user import User
 from app.api.dependencies.db import get_db
-from core.services.user_service import UserService
+from app.core.services.user_service import UserService
 from app.api.dependencies.auth import get_current_active_user
 from app.core.security import create_access_token, verify_password
 from app.core.config import ACCESS_TOKEN_EXPIRE_DAYS

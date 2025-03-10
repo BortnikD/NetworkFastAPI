@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
-from core.services.chat_service import ChatService
+from app.core.services.chat_service import ChatService
 from app.api.dependencies.auth import get_current_active_user
 from app.api.dependencies.db import get_db
 from app.api.schemas.chat import ChatMessageCreateLite, ChatMessageCreate, ChatMessagePublic
