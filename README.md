@@ -1,13 +1,14 @@
-# Example of a backend for a network
-This project is an simple example of how you can organize a backend for your social network
+# Example of a backend for a network 🌐
+This project is an simple example of how you can organize a backend for your social network.  
+Here I practice clean architecture principles to ensure the application is reliable, maintainable and scalable.
 
-## Technologies
+## Technologies ⚙️
 - _FastAPI_
 - _SQLAlchemy (postgres)_
 - _alembic_
 
 
-## Installation 
+## Installation ⬇️
 1. Clone the repository
 ```bash
 git clone https://github.com/BortnikD/networkBackendFastApi.git
@@ -28,7 +29,7 @@ set POSTGRES_PASSWORD "your_password"
 
 ```
 
-4. Start the server
+4. Start the server 🚀
 ```bash
 uvicorn app.main:app --reload
 ```
