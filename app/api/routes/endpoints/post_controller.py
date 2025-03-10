@@ -5,7 +5,7 @@ from typing import Annotated
 from app.api.schemas.user import UserPublic
 from app.api.schemas.post import PostCreate, PostPublic, PostUpdate
 from app.api.schemas.pagination import PaginatedResponse, PostPagination
-from app.services.post_service import PostService
+from app.core.services.post_service import PostService
 from app.api.dependencies.db import get_db
 from app.api.dependencies.auth import get_current_active_user
 

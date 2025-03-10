@@ -7,7 +7,7 @@ from app.api.dependencies.auth import get_current_active_user
 from app.api.dependencies.db import get_db
 from app.api.schemas.pagination import CommentPagination, PaginatedResponse
 from app.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
-from app.services.comment_service import CommentService
+from app.core.services.comment_service import CommentService
 
 router = APIRouter(
     prefix='/comments'

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.db import get_db
 from app.api.schemas.profile import ProfilePublic
-from app.services.profile_service import ProfileService
+from app.core.services.profile_service import ProfileService
 
 router = APIRouter(
     prefix='/profiles'

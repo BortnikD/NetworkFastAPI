@@ -6,7 +6,7 @@ from typing import Annotated
 from app.database.models.user import User
 from app.api.dependencies.db import get_db
 from app.api.dependencies.auth import get_current_active_user
-from app.services.like_service import LikeService
+from app.core.services.like_service import LikeService
 from app.api.schemas.pagination import LikePagination, PaginatedResponse
 from app.api.schemas.like import LikePublic, LikeCreate
 
