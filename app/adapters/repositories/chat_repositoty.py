@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.adapters.api.schemas.chat import ChatCreate
 from app.infrastructure.database.models.chat import Chat
 from app.adapters.api.schemas.pagination import PaginatedResponse
-from app.core.utils.pages import get_prev_next_pages
+from app.adapters.repositories.utils.pages import get_prev_next_pages
 
 
 class ChatRepository:

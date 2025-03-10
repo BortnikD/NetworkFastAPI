@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.adapters.api.schemas.comment import CommentCreate, CommentPublic, CommentUpdate
-from app.core.utils.pages import get_prev_next_pages
+from app.adapters.repositories.utils.pages import get_prev_next_pages
 from app.infrastructure.database.models.comment import Comment
 from app.adapters.api.schemas.pagination import PaginatedResponse
 

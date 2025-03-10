@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.core.utils.pages import get_prev_next_pages
+from app.adapters.repositories.utils.pages import get_prev_next_pages
 from app.infrastructure.database.models.like import Like
 from app.adapters.api.schemas.like import LikePublic
 from app.adapters.api.schemas.pagination import PaginatedResponse

@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.utils.pages import get_prev_next_pages
+from app.adapters.repositories.utils.pages import get_prev_next_pages
 from app.infrastructure.database.models import ChatMessage
 from app.infrastructure.database.models import Chat
 from app.adapters.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate, ChatMessagePublic
