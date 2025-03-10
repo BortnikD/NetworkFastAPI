@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status
 
 from app.adapters.api.schemas.pagination import PaginatedResponse
-from app.database.models.user import User
+from app.infrastructure.database.models.user import User
 from app.adapters.api.schemas.user import UserCreate
 from app.adapters.repositories.user_repository import UserRepository
 

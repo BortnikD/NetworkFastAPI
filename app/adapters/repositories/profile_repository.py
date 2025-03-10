@@ -4,7 +4,7 @@ from sqlalchemy import func, distinct
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models import (
+from app.infrastructure.database.models import (
     User, 
     Subscription
 )

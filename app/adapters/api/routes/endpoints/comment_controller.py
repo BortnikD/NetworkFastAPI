@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
-from app.database.models.user import User
+from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.schemas.pagination import CommentPagination, PaginatedResponse

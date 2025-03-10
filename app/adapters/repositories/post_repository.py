@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models.post import Post
+from app.infrastructure.database.models.post import Post
 from app.adapters.api.schemas.post import PostCreate, PostPublic, PostUpdate
 from app.adapters.api.schemas.pagination import PaginatedResponse
 from app.core.utils.pages import get_prev_next_pages

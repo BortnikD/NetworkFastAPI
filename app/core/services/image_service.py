@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models.image import Image
+from app.infrastructure.database.models.image import Image
 from app.adapters.repositories.image_repository import ImageRepository
 
 

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from fastapi import HTTPException
 
-from app.database.models.subscription import Subscription
+from app.infrastructure.database.models.subscription import Subscription
 from app.adapters.api.schemas.pagination import PaginatedResponse
 from app.adapters.api.schemas.subsctiption import SubscriptionPublic
 from app.core.utils.pages import get_prev_next_pages

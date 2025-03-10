@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models.image import Image
+from app.infrastructure.database.models.image import Image
 
 
 class ImageRepository:

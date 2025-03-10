@@ -6,7 +6,7 @@ from app.core.services.subscription_servise import SubscriptionService
 from app.adapters.api.dependencies.auth import get_current_active_user
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.schemas.pagination import LikePagination
-from app.database.models import User
+from app.infrastructure.database.models import User
 
 
 router = APIRouter(

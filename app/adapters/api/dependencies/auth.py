@@ -1,14 +1,15 @@
+import jwt
 from typing import Annotated
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from app.database.models.user import User
+from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
 from app.core.config import AUTH_KEY, HASHING_ALGORITHM
-import jwt
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

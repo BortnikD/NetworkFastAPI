@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.database.models.user import User
+from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
 from app.adapters.api.dependencies.auth import get_current_active_user

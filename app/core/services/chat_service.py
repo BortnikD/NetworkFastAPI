@@ -6,7 +6,7 @@ from app.adapters.api.schemas.pagination import PaginatedResponse
 from app.adapters.repositories.chat_repositoty import ChatRepository
 from app.adapters.repositories.chat_message_repository import ChatMessageRepository
 from app.adapters.api.schemas.chat import ChatMessageCreate, ChatMessageUpdate
-from app.database.models.chat import Chat, ChatMessage
+from app.infrastructure.database.models.chat import Chat, ChatMessage
 from app.core.exceptions.chat import ChatDoesNotExist
 
 

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from starlette.responses import FileResponse
 
-from app.database.models.user import User
+from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.db import get_db
 from app.adapters.api.dependencies.auth import get_current_user
 from app.core.services.image_service import ImageService

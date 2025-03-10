@@ -6,7 +6,7 @@ from app.core.config import ALLOWED_HOSTS
 from app.middlewares.cors import setup_cors
 from app.adapters.api.routes import route
 from app.adapters.api.routes.endpoints import auth_controller
-from app.database.database import engine
+from app.infrastructure.database.database import engine
 
 setup_logging(logging.INFO)
 app = FastAPI()
