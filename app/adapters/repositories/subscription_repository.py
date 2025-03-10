@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from app.core.interfaces.subscription import ISubscription
 from app.infrastructure.database.models.subscription import Subscription
 from app.core.dto.pagination import PaginatedResponse
-from app.core.dto.subsctiption import SubscriptionPublic
+from app.core.dto.subscription import SubscriptionPublic
 from app.adapters.repositories.utils.pages import get_prev_next_pages
 
 

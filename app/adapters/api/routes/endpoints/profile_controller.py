@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.adapters.api.dependencies.db import get_db
 from app.core.dto.profile import ProfilePublic
 from app.core.services.profile_service import ProfileService
+from app.adapters.api.dependencies.services.profile import get_profile_service
 
-router = APIRouter(
-    prefix='/profiles'
-)
+router = APIRouter(prefix='/profiles')
 
 
-@router.get('/{user_id}')
-async def get_profile(user_id: int, db: AsyncSession = Depends(get_db)) -> ProfilePublic:
-    service = ProfileService(db)
-    return await service.get_profile_by_id(user_id)
+@router.get('/{user_id}', response_model=ProfilePublic)
+async def get_profile(
+    user_id: int,
+    profile_service: ProfileService = Depends(get_profile_service)
+):
+    """Получение профиля пользователя по ID."""
+    return await profile_service.get_profile_by_id(user_id)
