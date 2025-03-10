@@ -1,13 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncEngine
-
-from app.adapters.repositories.profile_repository import ProfileRepository
 from app.core.dto.profile import ProfilePublic
+from app.core.interfaces.profile import IProfile
 
 
 class ProfileService:
-    def __init__(self, db: AsyncEngine):
-        self.repository = ProfileRepository(db)
+    def __init__(self, profile_port: IProfile):
+        self.profile_port = profile_port
         
         
     async def get_profile_by_id(self, user_id: int) -> ProfilePublic:
-        return await self.repository.get_profile_by_id(user_id)
+        return await self.profile_port.get_by_user_id(user_id)

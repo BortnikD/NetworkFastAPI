@@ -75,6 +75,6 @@ class UserRepository(IUser):  # Реализуем интерфейс IUser
             return PaginatedResponse(count=count)
 
 
-    async def get_by_id(self, id: int) -> User | None:
-        result = await self.db.execute(select(User).filter(User.id == id))
+    async def get_by_id(self, user_id: int) -> User | None:
+        result = await self.db.execute(select(User).filter(User.id == user_id))
         return result.scalars().first()

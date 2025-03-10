@@ -1,27 +1,25 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.infrastructure.database.models.post import Post
 from app.core.dto.post import PostCreate, PostUpdate
 from app.core.dto.pagination import PaginatedResponse
-from app.adapters.repositories.post_repository import PostRepository
+from app.core.interfaces.post import IPost
+from app.infrastructure.database.models.post import Post
 
 
 class PostService:
-    def __init__(self, db: AsyncSession):
-        self.post_repository = PostRepository(db)
+    def __init__(self, post_port: IPost):
+        self.post_port = post_port
 
     async def get_posts(self, offset: int, limit: int) -> PaginatedResponse: 
-        return await self.post_repository.get_posts(offset, limit)
+        return await self.post_port.get_all_posts(offset, limit)
     
     async def get_post_by_id(self, post_id: int) -> Post:
-        return await self.post_repository.get_post_by_id(post_id)
+        return await self.post_port.get_post(post_id)
 
     async def create_post(self, post: PostCreate) -> Post:
-        return await self.post_repository.create_post(post)
+        return await self.post_port.save(post)
     
     async def delete_post(self, post_id: int, user_id: int):
-        await self.post_repository.delete_post(post_id, user_id)
+        await self.post_port.delete(post_id, user_id)
         return {"detail": f"Post with id {post_id} has been deleted."}
     
     async def update_post(self, post: PostUpdate, user_id: int) -> Post:
-        return await self.post_repository.update_post(post, user_id)
+        return await self.post_port.update(post, user_id)

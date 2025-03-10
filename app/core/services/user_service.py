@@ -1,30 +1,21 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import status
-
 from app.core.dto.pagination import PaginatedResponse
 from app.infrastructure.database.models.user import User
-from app.core.dto import UserCreate
-from app.adapters.repositories.user_repository import UserRepository
+from app.core.dto.user import UserCreate
+from app.core.interfaces.user import IUser
 
 
 class UserService:
-    def __init__(self, db: AsyncSession) -> None:
-        self.user_repository = UserRepository(db)
+    def __init__(self, user_port: IUser) -> None:
+        self.user_port = user_port
 
-    async def create_user(self, user_create: UserCreate) -> User :
-        user = await self.user_repository.create_user(user_create)
-        return user
+    async def create_user(self, user_create: UserCreate) -> User:
+        return await self.user_port.save(user_create)
 
     async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
-        return await self.user_repository.get_users(offset, limit)
+        return await self.user_port.get_all(offset, limit)
     
-    async def get_user_by_id(self, id: int) -> User:
-        user = await self.user_repository.get_user_by_id(id)
-        if user:
-            return user
-        else:
-            raise status.HTTP_404_NOT_FOUND
+    async def get_user_by_id(self, user_id: int) -> User:
+        return await self.user_port.get_by_id(user_id)
 
     async def get_user_by_email(self, email: str) -> User:
-        user = await self.user_repository.get_user_by_email(email)
-        return user
+        return await self.user_port.get_by_email(email)
