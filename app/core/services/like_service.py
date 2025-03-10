@@ -13,5 +13,5 @@ class LikeService:
     async def get_likes_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
         return await self.like_port.get_all_by_post_id(post_id, offset, limit)
 
-    async def delete_like(self, like_id: int, current_user_id: int):
+    async def delete_like(self, like_id: int, current_user_id: int) -> None:
         await self.like_port.delete(like_id, current_user_id)

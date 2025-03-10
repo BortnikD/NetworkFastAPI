@@ -17,5 +17,5 @@ class CommentService:
     async def update_comment(self, comment: CommentUpdate, current_user_id: int) -> Comment:
         return await self.comment_port.update(comment, current_user_id)
     
-    async def delete_comment(self, comment_id, current_user_id):
+    async def delete_comment(self, comment_id, current_user_id) -> None:
         await self.comment_port.delete(comment_id, current_user_id)

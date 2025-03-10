@@ -17,9 +17,8 @@ class PostService:
     async def create_post(self, post: PostCreate) -> Post:
         return await self.post_port.save(post)
     
-    async def delete_post(self, post_id: int, user_id: int):
+    async def delete_post(self, post_id: int, user_id: int) -> None:
         await self.post_port.delete(post_id, user_id)
-        return {"detail": f"Post with id {post_id} has been deleted."}
     
     async def update_post(self, post: PostUpdate, user_id: int) -> Post:
         return await self.post_port.update(post, user_id)
