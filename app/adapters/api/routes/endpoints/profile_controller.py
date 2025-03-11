@@ -12,4 +12,4 @@ async def get_profile(
     profile_service: ProfileService = Depends(get_profile_service)
 ):
     """Получение профиля пользователя по ID."""
-    return await profile_service.get_profile_by_id(user_id)
+    return await profile_service.get_by_user_id(user_id)

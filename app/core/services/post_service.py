@@ -8,10 +8,10 @@ class PostService:
     def __init__(self, post_port: IPost):
         self.post_port = post_port
 
-    async def get_posts(self, offset: int, limit: int) -> PaginatedResponse:
+    async def get_all_posts(self, offset: int, limit: int) -> PaginatedResponse:
         return await self.post_port.get_all_posts(offset, limit)
     
-    async def get_post_by_id(self, post_id: int) -> Post:
+    async def get_post(self, post_id: int) -> Post:
         return await self.post_port.get_post(post_id)
 
     async def save(self, post: PostCreate) -> Post:

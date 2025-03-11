@@ -36,7 +36,7 @@ async def upload_image(
 
     # Сохраняем ссылку в БД
     image = CreateImage(src=download_url, user_id=current_user.id, post_id=post_id)
-    await image_service.upload_image(image)
+    await image_service.upload(image)
 
     return {
         'filename': file.filename,

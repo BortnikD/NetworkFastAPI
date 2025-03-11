@@ -8,14 +8,14 @@ class UserService:
     def __init__(self, user_port: IUser) -> None:
         self.user_port = user_port
 
-    async def create_user(self, user_create: UserCreate) -> User:
+    async def save(self, user_create: UserCreate) -> User:
         return await self.user_port.save(user_create)
 
-    async def get_users(self, offset: int, limit: int) -> PaginatedResponse:
+    async def get_all(self, offset: int, limit: int) -> PaginatedResponse:
         return await self.user_port.get_all(offset, limit)
     
-    async def get_user_by_id(self, user_id: int) -> User:
+    async def get_by_id(self, user_id: int) -> User:
         return await self.user_port.get_by_id(user_id)
 
-    async def get_user_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> User:
         return await self.user_port.get_by_email(email)

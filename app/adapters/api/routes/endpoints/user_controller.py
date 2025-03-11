@@ -16,7 +16,7 @@ async def create_user(
 ):
     """Создание нового пользователя."""
     try:
-        return await service.create_user(user_create)
+        return await service.save(user_create)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -28,7 +28,7 @@ async def read_users(
 ):
     """Получение списка пользователей с пагинацией."""
     try:
-        return await service.get_users(pagination.offset, pagination.limit)
+        return await service.get_all(pagination.offset, pagination.limit)
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -40,6 +40,6 @@ async def read_user(
 ):
     """Получение пользователя по ID."""
     try:
-        return await service.get_user_by_id(user_id)
+        return await service.get_by_id(user_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

@@ -32,7 +32,7 @@ async def get_current_user(
     except InvalidTokenError:
         raise credentials_exception
 
-    user = await service.get_user_by_email(email)
+    user = await service.get_by_email(email)
     if user is None:
         raise credentials_exception
     return user

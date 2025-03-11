@@ -17,7 +17,7 @@ async def read_posts(
     post_service: PostService = Depends(get_post_service)
 ):
     """Получение списка постов с пагинацией."""
-    return await post_service.get_posts(pagination.offset, pagination.limit)
+    return await post_service.get_all_posts(pagination.offset, pagination.limit)
 
 
 @router.post('/', response_model=PostPublic)
