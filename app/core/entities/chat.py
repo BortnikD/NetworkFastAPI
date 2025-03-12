@@ -1,15 +1,13 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Chat:
+class Chat(BaseModel):
     id: int
     first_user_id: int
     second_user_id: int
 
 
-@dataclass
-class ChatMessage:
+class ChatMessage(BaseModel):
     id: int
     chat_id: int
     user_id: int

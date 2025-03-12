@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class User:
+class User(BaseModel):
     id: int
     username: str
     email: str

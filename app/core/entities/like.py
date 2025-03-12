@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Like:
+class Like(BaseModel):
     id: int
     user_id: int
     post_id: int
