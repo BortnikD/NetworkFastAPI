@@ -9,7 +9,7 @@ def setup_logging(level: logging) -> None:
         level=level,
         format="%(levelname)s | %(asctime)s | %(filename)s | %(message)s",
         handlers=[
-            logging.FileHandler(log_filename),
+            logging.FileHandler(log_filename, encoding="utf-8"),
             logging.StreamHandler()
         ]
     )
