@@ -12,7 +12,7 @@ from app.infrastructure.admin import (
 )
 
 
-def setup_views(admin: Admin):
+def setup_views(admin: Admin) -> None:
     admin.add_view(UserAdmin)
     admin.add_view(ChatAdmin)
     admin.add_view(ChatMessageAdmin)
