@@ -6,7 +6,7 @@ from app.infrastructure.settings.config import ALLOWED_HOSTS
 from app.infrastructure.middlewares.cors import setup_cors
 from app.adapters.api.routes import route
 from app.adapters.api.routes.endpoints import auth_controller
-from app.infrastructure.database.admin.admin import setup_admin
+from app.infrastructure.admin.admin import setup_admin
 
 setup_logging(logging.INFO)
 app = FastAPI()
