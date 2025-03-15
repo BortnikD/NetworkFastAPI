@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 
-from app.infrastructure.database.models import Comment, Image, Post
+from app.infrastructure.database.models import Comment, Image, Post, Like
 
 
 class CommentAdmin(ModelView, model=Comment):
