@@ -14,16 +14,10 @@ setup_admin(app)
 setup_routers(app)
 
 
-@app.on_event("startup")
-async def startup():
-    logging.info("Application has started")
-        
-
-
 @app.on_event("shutdown")
 async def shutdown():
     await engine.dispose()
-    logging.info("The application is disabled")
+    logging.info("The database connection is disabled")
     
 
 
