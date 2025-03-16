@@ -4,7 +4,7 @@ import logging
 from fastapi import Request
 from sqladmin.authentication import AuthenticationBackend
 
-from app.adapters.api.dependencies.services.user import get_user_service
+from app.adapters.dependencies.services.user import get_user_service
 from app.infrastructure.database.database import AsyncSessionLocal
 from app.infrastructure.database.models import User
 from app.infrastructure.settings.security import verify_password, create_access_token

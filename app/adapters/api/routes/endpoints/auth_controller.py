@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.adapters.api.dependencies.services.user import get_user_service
+from app.adapters.dependencies.services.user import get_user_service
 from app.infrastructure.database.models.user import User
 from app.core.services.user_service import UserService
-from app.adapters.api.dependencies.auth import get_current_active_user
+from app.adapters.dependencies.auth import get_current_active_user
 from app.infrastructure.settings.security import create_access_token, verify_password
 from app.infrastructure.settings.config import ACCESS_TOKEN_EXPIRE_DAYS
 from app.core.dto.user import UserPublic

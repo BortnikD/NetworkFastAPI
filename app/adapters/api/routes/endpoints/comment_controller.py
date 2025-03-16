@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 from typing import Annotated
 
 from app.infrastructure.database.models.user import User
-from app.adapters.api.dependencies.auth import get_current_active_user
+from app.adapters.dependencies.auth import get_current_active_user
 from app.core.dto.pagination import CommentPagination, PaginatedResponse
 from app.core.dto.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.core.services.comment_service import CommentService
-from app.adapters.api.dependencies.services.comment import get_comment_service
+from app.adapters.dependencies.services.comment import get_comment_service
 
 router = APIRouter(prefix='/comments')
 

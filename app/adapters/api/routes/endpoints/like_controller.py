@@ -2,11 +2,11 @@ from fastapi import APIRouter, Query, Depends
 from typing import Annotated
 
 from app.infrastructure.database.models.user import User
-from app.adapters.api.dependencies.auth import get_current_active_user
+from app.adapters.dependencies.auth import get_current_active_user
 from app.core.services.like_service import LikeService
 from app.core.dto.pagination import LikePagination, PaginatedResponse
 from app.core.dto.like import LikePublic, LikeCreate
-from app.adapters.api.dependencies.services.like import get_like_service
+from app.adapters.dependencies.services.like import get_like_service
 
 router = APIRouter(prefix='/likes')
 

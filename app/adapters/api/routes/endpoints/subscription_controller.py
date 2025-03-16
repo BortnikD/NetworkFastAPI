@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from typing import Annotated
 
 from app.core.services.subscription_service import SubscriptionService
-from app.adapters.api.dependencies.auth import get_current_active_user
-from app.adapters.api.dependencies.services.subscription import get_subscription_service
+from app.adapters.dependencies.auth import get_current_active_user
+from app.adapters.dependencies.services.subscription import get_subscription_service
 from app.core.dto.pagination import LikePagination
 from app.core.dto.subscription import SubscriptionPublic
 from app.infrastructure.database.models import User

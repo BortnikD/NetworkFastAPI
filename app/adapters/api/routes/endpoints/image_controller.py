@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from starlette.responses import FileResponse
 
 from app.infrastructure.database.models.user import User
-from app.adapters.api.dependencies.auth import get_current_user
+from app.adapters.dependencies.auth import get_current_user
 from app.core.dto.image import Image, CreateImage
 from app.infrastructure.settings.config import POSTS_IMAGES_DIR, BASE_URL
 from app.core.services.image_service import ImageService
-from app.adapters.api.dependencies.services.image import get_image_service
+from app.adapters.dependencies.services.image import get_image_service
 
 router = APIRouter(prefix='/images')
 

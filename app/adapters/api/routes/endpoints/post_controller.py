@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, Query, Body
+from fastapi import APIRouter, Depends, Query, Body
 from typing import Annotated
 
 from app.core.dto.user import UserPublic
 from app.core.dto.post import PostCreate, PostPublic, PostUpdate
 from app.core.dto.pagination import PaginatedResponse, PostPagination
 from app.core.services.post_service import PostService
-from app.adapters.api.dependencies.auth import get_current_active_user
-from app.adapters.api.dependencies.services.post import get_post_service
+from app.adapters.dependencies.auth import get_current_active_user
+from app.adapters.dependencies.services.post import get_post_service
 
 router = APIRouter(prefix='/posts')
 

@@ -2,7 +2,7 @@ from fastapi import Depends
 
 from app.core.services.post_service import PostService
 from app.adapters.repositories.post_repository import PostRepository
-from app.adapters.api.dependencies.db import get_db
+from app.adapters.dependencies.db import get_db
 
 
 def get_post_service(db=Depends(get_db)) -> PostService:

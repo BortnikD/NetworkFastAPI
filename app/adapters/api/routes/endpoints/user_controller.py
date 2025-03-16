@@ -4,7 +4,7 @@ from typing import Annotated
 from app.core.dto.pagination import UsersPagination, PaginatedResponse
 from app.core.dto.user import UserCreate, UserPublic
 from app.core.services.user_service import UserService
-from app.adapters.api.dependencies.services.user import get_user_service
+from app.adapters.dependencies.services.user import get_user_service
 
 router = APIRouter(prefix='/users')
 

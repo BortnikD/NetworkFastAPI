@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.core.dto.profile import ProfilePublic
 from app.core.services.profile_service import ProfileService
-from app.adapters.api.dependencies.services.profile import get_profile_service
+from app.adapters.dependencies.services.profile import get_profile_service
 
 router = APIRouter(prefix='/profiles')
 
