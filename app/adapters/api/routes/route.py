@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter
+from fastapi import APIRouter, FastAPI
 
 from .endpoints import (
     comment_controller,
@@ -8,14 +8,14 @@ from .endpoints import (
     post_controller,
     profile_controller,
     subscription_controller,
-    user_controller
+    user_controller,
+    auth_controller
 )
 from .endpoints.ws import messages_controller
+from app.infrastructure.settings.config import BASE_URL
 
-router = APIRouter()
 
-
-def include_routers():
+def include_routers(router: APIRouter):
     try:
         router.include_router(user_controller.router, tags=['users'])
         router.include_router(post_controller.router, tags=['posts'])
@@ -25,7 +25,28 @@ def include_routers():
         router.include_router(subscription_controller.router, tags=['subscriptions'])
         router.include_router(profile_controller.router, tags=['profiles'])
         router.include_router(messages_controller.router, tags=['messages'])
-
-        logging.info('All routers are configured')
     except Exception as e:
         logging.error(f"Failed to configure routers: {e}")
+
+
+def include_auth_routers(router: APIRouter):
+    try:
+        router.include_router(auth_controller.router, tags=['auth'])
+    except Exception as e:
+        logging.error(f"Failed to configure auth routers: {e}")
+
+
+def setup_routers(app: FastAPI):
+    router = APIRouter()
+    include_routers(router)
+    include_auth_routers(router)
+    app.include_router(
+        router,
+        prefix='/api'
+    )
+
+    app.include_router(
+        auth_controller.router,
+        tags=['auth']
+    )
+    logging.info(f'All routers are configured on {BASE_URL}/docs')
