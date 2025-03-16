@@ -18,6 +18,7 @@ class User(Base):
     date_joined: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), nullable=False)
     last_active_time: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now(),
                                                        nullable=False)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
 
     comments = relationship("Comment", back_populates="user", cascade="all, delete")
     posts = relationship("Post", back_populates="user", cascade="all, delete")
