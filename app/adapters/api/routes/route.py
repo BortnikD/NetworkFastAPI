@@ -38,13 +38,13 @@ def include_auth_routers(router: APIRouter):
 
 def setup_routers(app: FastAPI):
     router = APIRouter()
+    auth_router = APIRouter()
     include_routers(router)
-    include_auth_routers(router)
+    include_auth_routers(auth_router)
     app.include_router(
         router,
         prefix='/api'
     )
-
     app.include_router(
         auth_controller.router,
         tags=['auth']
