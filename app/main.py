@@ -7,7 +7,7 @@ from app.infrastructure.settings.logger import setup_logging
 from app.infrastructure.middlewares.cors import setup_cors
 from app.infrastructure.admin.admin import setup_admin
 
-setup_logging(logging.INFO)
+setup_logging()
 app = FastAPI()
 setup_cors(app)
 setup_admin(app)
