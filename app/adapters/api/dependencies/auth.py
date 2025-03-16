@@ -1,13 +1,11 @@
 import jwt
 from typing import Annotated
 from jwt.exceptions import InvalidTokenError
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.infrastructure.database.models.user import User
 from app.adapters.api.dependencies.services.user import get_user_service
-from app.adapters.api.dependencies.db import get_db
 from app.core.services.user_service import UserService
 from app.infrastructure.settings.config import AUTH_KEY, HASHING_ALGORITHM
 
