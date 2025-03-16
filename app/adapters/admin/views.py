@@ -1,6 +1,6 @@
 from sqladmin import Admin
 
-from app.infrastructure.admin import (
+from app.adapters.admin import (
     UserAdmin,
     ChatAdmin,
     ChatMessageAdmin,

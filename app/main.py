@@ -5,7 +5,7 @@ from app.infrastructure.database.database import engine
 from app.adapters.api.routes.route import setup_routers
 from app.infrastructure.settings.logger import setup_logging
 from app.infrastructure.middlewares.cors import setup_cors
-from app.infrastructure.admin.admin import setup_admin
+from app.adapters.admin.admin import setup_admin
 
 setup_logging()
 app = FastAPI()
