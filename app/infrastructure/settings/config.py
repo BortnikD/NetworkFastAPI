@@ -1,7 +1,10 @@
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+LOGGING_LEVEL = logging.INFO
 
 # set up host url
 BASE_URL = 'http://127.0.0.1:8000'
