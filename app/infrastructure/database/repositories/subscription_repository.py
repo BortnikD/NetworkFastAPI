@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
-from app.domain.repository.subscription import ISubscription
+from app.domain.repositories.subscription import ISubscription
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.dto.subscription import SubscriptionPublic
 from app.domain.exceptions.base import AccessError

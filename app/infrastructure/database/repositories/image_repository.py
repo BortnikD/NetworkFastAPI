@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.dto.image import CreateImage
-from app.domain.repository.image import IImage
+from app.domain.repositories.image import IImage
 from app.domain.exceptions.image import (
     ImageIsEmptyError,
     ImageUploadError,

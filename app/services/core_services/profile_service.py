@@ -1,5 +1,5 @@
 from app.domain.dto.profile import ProfilePublic
-from app.domain.repository.profile import IProfile
+from app.domain.repositories.profile import IProfile
 
 
 class ProfileService:

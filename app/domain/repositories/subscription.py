@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.domain.repository.entities.subscription import Subscription
+from app.domain.repositories.entities.subscription import Subscription
 from app.domain.dto.pagination import PaginatedResponse
 
 

@@ -1,7 +1,7 @@
 from app.domain.dto.pagination import PaginatedResponse
 from app.infrastructure.database.models.user import User
 from app.domain.dto.user import UserCreate
-from app.domain.repository.user import IUser
+from app.domain.repositories.user import IUser
 
 
 class UserService:

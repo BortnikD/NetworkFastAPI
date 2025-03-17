@@ -1,6 +1,6 @@
 from app.domain.dto.post import PostCreate, PostUpdate
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repository.post import IPost
+from app.domain.repositories.post import IPost
 from app.infrastructure.database.models.post import Post
 
 

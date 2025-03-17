@@ -1,6 +1,6 @@
 from app.infrastructure.database.models.like import Like
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repository.like import ILike
+from app.domain.repositories.like import ILike
 
 
 class LikeService:

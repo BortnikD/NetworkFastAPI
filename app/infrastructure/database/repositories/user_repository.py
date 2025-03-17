@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.repository.user import IUser
+from app.domain.repositories.user import IUser
 from app.domain.dto.user import UserCreate, UserPublic
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.user import (

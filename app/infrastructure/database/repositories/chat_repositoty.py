@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.exceptions.base import AccessError
-from app.domain.repository.chat import IChat
+from app.domain.repositories.chat import IChat
 from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.chat import (

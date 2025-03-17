@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 
 from app.domain.dto.like import LikePublic
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repository.like import ILike
+from app.domain.repositories.like import ILike
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.like import (
     AlreadyLikedPost,

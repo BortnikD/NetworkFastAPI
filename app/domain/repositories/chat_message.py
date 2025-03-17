@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.domain.repository.entities.chat import ChatMessage
+from app.domain.repositories.entities.chat import ChatMessage
 from app.domain.dto.chat import ChatMessageCreate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.dto.chat import ChatMessageUpdate

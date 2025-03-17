@@ -2,8 +2,8 @@ from fastapi import HTTPException
 
 from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repository.chat import IChat
-from app.domain.repository.chat_message import IChatMessage
+from app.domain.repositories.chat import IChat
+from app.domain.repositories.chat_message import IChatMessage
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
 from app.infrastructure.database.models.chat import Chat, ChatMessage
 from app.domain.exceptions.chat import ChatDoesNotExist

@@ -1,5 +1,5 @@
 from app.domain.dto.image import CreateImage
-from app.domain.repository.image import IImage
+from app.domain.repositories.image import IImage
 from app.infrastructure.database.models.image import Image
 
 

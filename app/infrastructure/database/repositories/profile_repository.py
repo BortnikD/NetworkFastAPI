@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.dto.profile import ProfilePublic
-from app.domain.repository.profile import IProfile
+from app.domain.repositories.profile import IProfile
 from app.domain.exceptions.user import UserDoesNotExist
 
 from app.infrastructure.database.models import User, Subscription

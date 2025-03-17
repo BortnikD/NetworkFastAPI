@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate, ChatMessagePublic
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repository.chat_message import IChatMessage
+from app.domain.repositories.chat_message import IChatMessage
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.chat import (
     ChatDoesNotExist,

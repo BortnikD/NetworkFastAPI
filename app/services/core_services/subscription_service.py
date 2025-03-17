@@ -2,7 +2,7 @@ from fastapi import HTTPException
 
 from app.domain.dto.pagination import PaginatedResponse
 from app.infrastructure.database.models import Subscription
-from app.domain.repository.subscription import ISubscription
+from app.domain.repositories.subscription import ISubscription
 
 
 class SubscriptionService:

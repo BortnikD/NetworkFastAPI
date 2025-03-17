@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.domain.repository.comment import IComment
+from app.domain.repositories.comment import IComment
 from app.domain.dto.comment import CommentCreate, CommentPublic, CommentUpdate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.base import AccessError
