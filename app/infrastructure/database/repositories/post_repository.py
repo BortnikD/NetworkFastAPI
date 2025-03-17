@@ -1,15 +1,23 @@
 import logging
-from fastapi import HTTPException
+
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.repository.post import IPost
-from app.infrastructure.database.models.post import Post
 from app.domain.dto.post import PostCreate, PostPublic, PostUpdate
 from app.domain.dto.pagination import PaginatedResponse
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.post import (
+    PostCreateError,
+    PostDoesNotExist,
+    PostDeleteError,
+    PostUpdateError
+)
+
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
+from app.infrastructure.database.models.post import Post
 
 
 class PostRepository(IPost):
@@ -28,7 +36,7 @@ class PostRepository(IPost):
             return db_post
         except IntegrityError:
             await self.db.rollback()
-            raise HTTPException(status_code=400, detail="Ошибка при попытке создания поста в бд")
+            raise PostCreateError("Ошибка при попытке создания поста в бд")
 
     async def get_all_posts(self, offset: int, limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()).select_from(Post))
@@ -39,12 +47,12 @@ class PostRepository(IPost):
 
         if posts:
             posts = [PostPublic.model_validate(post) for post in posts]
-            prev, next = get_prev_next_pages(offset, limit, count, 'posts')
+            prev_page, next_page = get_prev_next_pages(offset, limit, count, 'posts')
             logging.info(f'posts issued all posts count = {count}')
             return PaginatedResponse(
                 count=count,
-                prev=prev,
-                next=next,
+                prev=prev_page,
+                next=next_page,
                 results=posts
             )
         else:
@@ -56,7 +64,7 @@ class PostRepository(IPost):
         post = result.scalars().first()
         if not post:
             logging.error(f'Пост с id {post_id} не найден')
-            raise HTTPException(status_code=404, detail=f'Пост с id {post_id} не найден')
+            raise PostDoesNotExist(f'Пост с id {post_id} не найден')
         return post
 
     async def delete(self, post_id: int, current_user_id: int) -> None:
@@ -64,10 +72,10 @@ class PostRepository(IPost):
         post_to_delete = result.scalars().first()
         if post_to_delete is None:
             logging.warning(f"Пост с id {post_id} не найден")
-            raise HTTPException(status_code=404, detail=f"Пост с id {post_id} не найден")
+            raise PostDoesNotExist(f'Пост с id {post_id} не найден')
         if post_to_delete.user_id != current_user_id:
             logging.warning(f'user with id = {current_user_id} tried to delete post with id = {post_id}')
-            raise HTTPException(status_code=403, detail="You do not have access rights")
+            raise AccessError("You do not have access rights")
         try:
             await self.db.delete(post_to_delete)
             await self.db.commit()
@@ -75,17 +83,17 @@ class PostRepository(IPost):
         except SQLAlchemyError:
             await self.db.rollback()
             logging.error(f'Ошибка при удалении поста с post_id={post_id}')
-            raise HTTPException(status_code=500, detail=f'Ошибка при удалении поста с post_id={post_id}')
+            raise PostDeleteError(f'Ошибка при удалении поста с post_id={post_id}')
 
     async def update(self, post: PostUpdate, current_user_id: int) -> Post:
         result = await self.db.execute(select(Post).filter(Post.id == post.id))
         db_post = result.scalars().first()
         if db_post is None:
             logging.warning(f"Пост с id {post.id} не найден")
-            raise HTTPException(status_code=404, detail=f"Пост с id {post.id} не найден")
+            raise PostDoesNotExist(f"Пост с id {post.id} не найден")
         if db_post.user_id != current_user_id:
             logging.warning(f'user with id = {current_user_id} tried to update post with id = {post.id}')
-            raise HTTPException(status_code=403, detail="You do not have access rights")
+            raise AccessError("You do not have access rights")
         try:
             db_post.text_content = post.text_content
             await self.db.commit()
@@ -94,4 +102,4 @@ class PostRepository(IPost):
         except IntegrityError:
             await self.db.rollback()
             logging.error(f'Ошибка при изменении поста с post_id={post.id}')
-            raise HTTPException(status_code=400, detail=f'Ошибка при изменении поста с post_id={post.id}')
+            raise PostUpdateError(f'Ошибка при изменении поста с post_id={post.id}')

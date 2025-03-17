@@ -1,15 +1,23 @@
 import logging
-from fastapi import HTTPException
+
 from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.exceptions.base import AccessError
 from app.domain.repository.chat import IChat
 from app.domain.dto.chat import ChatCreate
-from app.infrastructure.database.models.chat import Chat
 from app.domain.dto.pagination import PaginatedResponse
+from app.domain.exceptions.chat import (
+    ChatCreateError,
+    ChatDoesNotExist,
+    MessageDeleteError,
+)
+
+from app.infrastructure.database.models.chat import Chat
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
+
 
 
 class ChatRepository(IChat):
@@ -27,13 +35,13 @@ class ChatRepository(IChat):
         except IntegrityError as e:
             await self.db.rollback()
             logging.error(f"Ошибка целостности при создании чата: {str(e)}")
-            raise HTTPException(status_code=400, detail="Ошибка при создании чата")
+            raise ChatCreateError("Ошибка при создании чата")
 
     async def get_by_id(self, chat_id: int) -> Chat | None:
         chat = await self.db.get(Chat, chat_id)
         if not chat:
             logging.warning(f"Чат с id={chat_id} не существует")
-            raise HTTPException(status_code=404, detail="Чат не существует")
+            raise ChatDoesNotExist("Чат не существует")
         logging.info(f"Чат с id={chat_id} найден")
         return chat
 
@@ -70,11 +78,11 @@ class ChatRepository(IChat):
 
         if not chat:
             logging.warning(f"Пользователь id={current_user_id} попытался удалить несуществующий чат")
-            raise HTTPException(status_code=404, detail="Чат не существует")
+            raise ChatDoesNotExist("Чат не существует")
 
         if current_user_id not in (chat.first_user_id, chat.second_user_id):
             logging.warning(f"Пользователь id={current_user_id} пытался удалить чат id={chat_id}, но не является его участником")
-            raise HTTPException(status_code=403, detail="У вас нет прав доступа")
+            raise AccessError("У вас нет прав доступа")
 
         try:
             await self.db.delete(chat)
@@ -83,4 +91,4 @@ class ChatRepository(IChat):
         except SQLAlchemyError as e:
             await self.db.rollback()
             logging.error(f"Ошибка при удалении чата с id={chat_id}: {e}")
-            raise HTTPException(status_code=400, detail="Ошибка при удалении чата")
+            raise MessageDeleteError("Ошибка при удалении чата")

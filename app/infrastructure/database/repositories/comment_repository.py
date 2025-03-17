@@ -1,5 +1,5 @@
 import logging
-from fastapi import HTTPException
+
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,9 +7,17 @@ from sqlalchemy.future import select
 
 from app.domain.repository.comment import IComment
 from app.domain.dto.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.domain.dto.pagination import PaginatedResponse
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.comment import (
+    CommentDoesNotExist,
+    CommentCreateError,
+    CommentUpdateError,
+    CommentDeleteError
+)
+
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
 from app.infrastructure.database.models.comment import Comment
-from app.domain.dto.pagination import PaginatedResponse
 
 
 class CommentRepository(IComment):
@@ -31,7 +39,7 @@ class CommentRepository(IComment):
         except IntegrityError:
             await self.db.rollback()
             logging.error(f"Error creating comment with post_id = {comment.post_id} and user_id = {current_user_id}.")
-            raise HTTPException(status_code=400, detail="Error creating comment")
+            raise CommentCreateError("Error creating comment")
 
     async def get_all_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()).filter(Comment.post_id == post_id))
@@ -55,10 +63,10 @@ class CommentRepository(IComment):
 
         if not db_comment:
             logging.error(f"Comment with id = {comment.id} not found for update.")
-            raise HTTPException(status_code=404, detail="This comment doesn't exist")
+            raise CommentDoesNotExist("This comment doesn't exist")
         if db_comment.user_id != current_user_id:
             logging.warning(f"User {current_user_id} attempted to update comment with id = {comment.id}, but has no access.")
-            raise HTTPException(status_code=403, detail="You do not have access rights")
+            raise AccessError("You do not have access rights")
 
         try:
             db_comment.text_content = comment.text_content
@@ -69,7 +77,7 @@ class CommentRepository(IComment):
         except IntegrityError:
             await self.db.rollback()
             logging.error(f"IntegrityError while updating comment with id = {comment.id}")
-            raise HTTPException(status_code=400, detail="Error updating comment")
+            raise CommentUpdateError("Error updating comment")
 
     async def delete(self, comment_id: int, current_user_id: int) -> None:
         result = await self.db.execute(select(Comment).filter(Comment.id == comment_id))
@@ -77,10 +85,10 @@ class CommentRepository(IComment):
 
         if not comment:
             logging.error(f"Comment with id = {comment_id} not found for deletion.")
-            raise HTTPException(status_code=404, detail="This comment doesn't exist")
+            raise CommentDoesNotExist("This comment doesn't exist")
         if comment.user_id != current_user_id:
             logging.warning(f"User {current_user_id} attempted to delete comment with id = {comment_id}, but has no access.")
-            raise HTTPException(status_code=403, detail="You do not have access rights")
+            raise AccessError("You do not have access rights")
 
         try:
             await self.db.delete(comment)
@@ -89,4 +97,4 @@ class CommentRepository(IComment):
         except IntegrityError:
             await self.db.rollback()
             logging.error(f"IntegrityError while deleting comment with id = {comment_id}")
-            raise HTTPException(status_code=400, detail="Error deleting comment")
+            raise CommentDeleteError("Error deleting comment")
