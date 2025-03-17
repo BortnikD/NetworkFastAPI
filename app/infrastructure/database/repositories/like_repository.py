@@ -11,7 +11,8 @@ from app.domain.repository.like import ILike
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.like import (
     AlreadyLikedPost,
-    LikeDoesNotExist, LikeDeleteError,
+    LikeDoesNotExist,
+    LikeDeleteError,
 )
 
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
