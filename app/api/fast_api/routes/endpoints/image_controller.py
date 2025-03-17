@@ -1,14 +1,27 @@
 import os
 import shutil
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    UploadFile,
+    File,
+    HTTPException
+)
 from starlette.responses import FileResponse
 
-from app.infrastructure.database.models.user import User
-from app.dependencies.auth import get_current_user
 from app.domain.dto.image import Image, CreateImage
+from app.domain.exceptions.image import (
+    ImageIsEmptyError,
+    ImageUploadError,
+    ImageNotFoundError
+)
+
 from app.infrastructure.settings.config import POSTS_IMAGES_DIR, BASE_URL
+from app.infrastructure.database.models.user import User
 from app.services.core_services.image_service import ImageService
 from app.dependencies.services.image import get_image_service
+from app.dependencies.auth import get_current_user
 
 router = APIRouter(prefix='/images')
 
@@ -35,8 +48,15 @@ async def upload_image(
     download_url = f"{BASE_URL}/api/v1/images/download/{relative_path}"
 
     # Сохраняем ссылку в БД
-    image = CreateImage(src=download_url, user_id=current_user.id, post_id=post_id)
-    await image_service.upload(image)
+    try:
+        image = CreateImage(src=download_url, user_id=current_user.id, post_id=post_id)
+        await image_service.upload(image)
+    except ImageIsEmptyError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+    except ImageUploadError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+    except ImageNotFoundError as e:
+        raise HTTPException(status_code=404, detail=e.message)
 
     return {
         'filename': file.filename,
@@ -67,4 +87,7 @@ async def get_sources_by_post_id(
         image_service: ImageService = Depends(get_image_service)
 ):
     """Получение списка изображений по ID поста."""
-    return await image_service.get_sources_by_post_id(post_id)
+    try:
+        return await image_service.get_sources_by_post_id(post_id)
+    except ImageNotFoundError as e:
+        raise HTTPException(status_code=404, detail=e.message)

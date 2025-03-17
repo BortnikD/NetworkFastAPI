@@ -1,12 +1,29 @@
-from fastapi import APIRouter, Depends, Path, Query
 from typing import Annotated
 
-from app.infrastructure.database.models.user import User
-from app.dependencies.auth import get_current_active_user
+from fastapi import (
+    APIRouter,
+    Depends,
+    Path,
+    Query,
+    HTTPException
+)
+
 from app.domain.dto.pagination import CommentPagination, PaginatedResponse
-from app.domain.dto.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.domain.dto.comment import (
+    CommentCreate,
+    CommentPublic,
+    CommentUpdate
+)
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.comment import (
+    CommentDoesNotExist,
+    CommentUpdateError,
+)
+
+from app.infrastructure.database.models.user import User
 from app.services.core_services.comment_service import CommentService
 from app.dependencies.services.comment import get_comment_service
+from app.dependencies.auth import get_current_active_user
 
 router = APIRouter(prefix='/comments')
 
@@ -38,7 +55,14 @@ async def update_comment(
     comment_service: CommentService = Depends(get_comment_service)
 ):
     """Обновляет комментарий, если он принадлежит текущему пользователю."""
-    return await comment_service.update(comment, current_user.id)
+    try:
+        return await comment_service.update(comment, current_user.id)
+    except CommentDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
+    except CommentUpdateError as e:
+        raise HTTPException(status_code=400, detail=e.message)
 
 
 @router.delete('/{comment_id}')
@@ -48,5 +72,12 @@ async def delete_comment(
     comment_service: CommentService = Depends(get_comment_service)
 ):
     """Удаляет комментарий, если он принадлежит текущему пользователю."""
-    await comment_service.delete(comment_id, current_user.id)
-    return {"message": "Comment deleted successfully"}
+    try:
+        await comment_service.delete(comment_id, current_user.id)
+    except CommentDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
+    except CommentUpdateError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+

@@ -1,9 +1,17 @@
-from fastapi import APIRouter, Depends, Query, Body
+from fastapi import APIRouter, Depends, Query, Body, HTTPException
 from typing import Annotated
 
 from app.domain.dto.user import UserPublic
 from app.domain.dto.post import PostCreate, PostPublic, PostUpdate
 from app.domain.dto.pagination import PaginatedResponse, PostPagination
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.post import (
+    PostCreateError,
+    PostDoesNotExist,
+    PostDeleteError,
+    PostUpdateError
+)
+
 from app.services.core_services.post_service import PostService
 from app.dependencies.auth import get_current_active_user
 from app.dependencies.services.post import get_post_service
@@ -27,8 +35,11 @@ async def create_post(
     post_service: PostService = Depends(get_post_service)
 ):
     """Создание нового поста."""
-    post = PostCreate(text_content=text_content, user_id=current_user.id)
-    return await post_service.save(post)
+    try:
+        post = PostCreate(text_content=text_content, user_id=current_user.id)
+        return await post_service.save(post)
+    except PostCreateError as e:
+        raise HTTPException(status_code=500, detail=e.message)
 
 
 @router.delete('/{post_id}')
@@ -38,7 +49,14 @@ async def delete_post(
     post_service: PostService = Depends(get_post_service)
 ):
     """Удаление поста пользователя."""
-    return await post_service.delete(post_id, current_user.id)
+    try:
+        return await post_service.delete(post_id, current_user.id)
+    except PostDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except PostDeleteError as e:
+        raise HTTPException(status_code=500, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
 
 
 @router.patch('/', response_model=PostPublic)
@@ -48,4 +66,11 @@ async def update_post(
     post_service: PostService = Depends(get_post_service)
 ):
     """Обновление поста."""
-    return await post_service.update(post, current_user.id)
+    try:
+        return await post_service.update(post, current_user.id)
+    except PostDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except PostUpdateError as e:
+        raise HTTPException(status_code=500, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)

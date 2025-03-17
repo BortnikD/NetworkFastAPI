@@ -1,11 +1,18 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import Annotated
+
+from app.domain.dto.pagination import LikePagination
+from app.domain.dto.subscription import SubscriptionPublic
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.subscription import (
+    SubscriptionIsAlreadyExist,
+    SubscriptionDoesNotExist,
+    SubscriptionDeleteError
+)
 
 from app.services.core_services.subscription_service import SubscriptionService
 from app.dependencies.auth import get_current_active_user
 from app.dependencies.services.subscription import get_subscription_service
-from app.domain.dto.pagination import LikePagination
-from app.domain.dto.subscription import SubscriptionPublic
 from app.infrastructure.database.models import User
 
 router = APIRouter(prefix='/subscriptions')
@@ -18,7 +25,10 @@ async def get_subscriptions_by_user_id(
     service: SubscriptionService = Depends(get_subscription_service)
 ):
     """Получить список подписок пользователя."""
-    return await service.get_subscriptions_by_user_id(user_id, pagination.offset, pagination.limit)
+    try:
+        return await service.get_subscriptions_by_user_id(user_id, pagination.offset, pagination.limit)
+    except SubscriptionDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
 
 
 @router.post('/', response_model=SubscriptionPublic)
@@ -28,7 +38,10 @@ async def create_subscription(
     service: SubscriptionService = Depends(get_subscription_service)
 ):
     """Создать подписку на пользователя."""
-    return await service.save(current_user.id, followed_user_id)
+    try:
+        return await service.save(current_user.id, followed_user_id)
+    except SubscriptionIsAlreadyExist as e:
+        raise HTTPException(status_code=409, detail=e.message)
 
 
 @router.delete('/{subscription_id}')
@@ -38,4 +51,11 @@ async def delete_subscription(
     service: SubscriptionService = Depends(get_subscription_service)
 ):
     """Удалить подписку по её ID."""
-    return await service.delete(subscription_id, current_user.id)
+    try:
+        return await service.delete(subscription_id, current_user.id)
+    except SubscriptionDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except SubscriptionDeleteError as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
