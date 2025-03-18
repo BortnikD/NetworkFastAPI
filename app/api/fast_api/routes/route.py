@@ -1,17 +1,9 @@
 import logging
 from fastapi import APIRouter, FastAPI
 
-from .endpoints import (
-    comment_controller,
-    image_controller,
-    like_controller,
-    post_controller,
-    profile_controller,
-    subscription_controller,
-    user_controller,
-    auth_controller
-)
-from .endpoints.ws import messages_controller
+from .endpoints.http import profile_controller, image_controller, post_controller, user_controller, auth_controller, \
+    comment_controller, like_controller, subscription_controller
+from .endpoints.websockets import messages_controller
 from app.infrastructure.settings.config import BASE_URL
 
 
