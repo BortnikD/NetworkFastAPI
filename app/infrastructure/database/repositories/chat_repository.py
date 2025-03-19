@@ -10,9 +10,9 @@ from app.domain.repositories.chat import IChat
 from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.chat import (
-    ChatCreateError,
     ChatDoesNotExist,
     MessageDeleteError,
+    ChatAlreadyExists,
 )
 
 from app.infrastructure.database.models.chat import Chat
@@ -35,7 +35,7 @@ class ChatRepository(IChat):
         except IntegrityError as e:
             await self.db.rollback()
             logging.error(f"Ошибка целостности при создании чата: {str(e)}")
-            raise ChatCreateError("Ошибка при создании чата")
+            raise ChatAlreadyExists("Ошибка при создании чата")
 
     async def get_by_id(self, chat_id: int) -> Chat | None:
         chat = await self.db.get(Chat, chat_id)

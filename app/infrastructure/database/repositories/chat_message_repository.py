@@ -11,7 +11,7 @@ from app.domain.repositories.chat_message import IChatMessage
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.chat import (
     ChatDoesNotExist,
-    ChatCreateError,
+    MessageCreateError,
     MessageDoesNotExist,
     MessageUpdateError,
     MessageDeleteError
@@ -45,7 +45,7 @@ class ChatMessageRepository(IChatMessage):
             return new_message
         except IntegrityError as e:
             logging.error(f"Ошибка целостности при создании сообщения: {str(e)}")
-            raise ChatCreateError("Ошибка при создании сообщения")
+            raise MessageCreateError("Ошибка при создании сообщения")
 
     async def get_by_chat_id(self, chat_id: int, offset: int, limit: int) -> PaginatedResponse:
         count_result = await self.db.execute(select(func.count()).where(ChatMessage.chat_id == chat_id))

@@ -5,11 +5,15 @@ class ChatDoesNotExist(DomainError):
     pass
 
 
-class ChatCreateError(DomainError):
+class ChatAlreadyExists(DomainError):
     pass
 
 
 class MessageDoesNotExist(DomainError):
+    pass
+
+
+class MessageCreateError(DomainError):
     pass
 
 
