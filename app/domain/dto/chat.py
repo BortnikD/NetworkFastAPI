@@ -25,15 +25,9 @@ class ChatMessageBase(BaseModel):
         from_attributes = True
 
 
-class ChatMessageCreateLite(ChatMessageBase):
-    chat_id: int
-    second_user_id: int
-
-
 class ChatMessageCreate(ChatMessageBase):
     chat_id: int
-    first_user_id: int
-    second_user_id: int
+    sender_id: int
 
 
 class ChatMessageUpdate(ChatMessageBase):
@@ -43,6 +37,6 @@ class ChatMessageUpdate(ChatMessageBase):
 class ChatMessagePublic(ChatMessageBase):
     id: int
     chat_id: int
-    user_id: int
+    sender_id: int
     created_at: datetime
     updated_at: datetime

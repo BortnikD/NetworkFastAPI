@@ -17,18 +17,18 @@ class ChatMessageAdmin(ModelView, model=ChatMessage):
     column_list = [
         ChatMessage.id,
         ChatMessage.chat_id,
-        ChatMessage.user_id,
+        ChatMessage.sender_id,
         ChatMessage.text
     ]
     column_searchable_list = [
         ChatMessage.id,
         ChatMessage.chat_id,
-        ChatMessage.user_id
+        ChatMessage.sender_id
     ]
     column_sortable_list = [
         ChatMessage.created_at,
         ChatMessage.chat_id,
-        ChatMessage.user_id
+        ChatMessage.sender_id
     ]
     form_excluded_columns = [
         ChatMessage.created_at,

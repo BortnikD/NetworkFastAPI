@@ -43,11 +43,7 @@ class ChatService:
 
 
     async def create_message(self, message: ChatMessageCreate) -> ChatMessage | None:
-        try:
-            return await self.chat_message_port.save(message)
-        except ChatDoesNotExist:
-            await self.init_chat(message.first_user_id, message.second_user_id)
-            return await self.chat_message_port.save(message)
+        return await self.chat_message_port.save(message)
 
 
     async def update_message(self, message: ChatMessageUpdate, current_user_id: int) -> ChatMessage:

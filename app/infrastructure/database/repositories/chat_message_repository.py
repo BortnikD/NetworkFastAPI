@@ -32,7 +32,7 @@ class ChatMessageRepository(IChatMessage):
             raise ChatDoesNotExist("Чат не существует")
 
         new_message = ChatMessage(
-            user_id=message.first_user_id,
+            sender_id=message.sender_id,
             chat_id=message.chat_id,
             text=message.text
         )
@@ -78,7 +78,7 @@ class ChatMessageRepository(IChatMessage):
             raise MessageDoesNotExist("Сообщение не существует")
 
         # Проверка прав доступа
-        if db_message.user_id != current_user_id:
+        if db_message.sender_id != current_user_id:
             logging.warning(f"Пользователь с id={current_user_id} не может обновить сообщение id={message.id}")
             raise AccessError("У вас нет прав для обновления этого сообщения")
 

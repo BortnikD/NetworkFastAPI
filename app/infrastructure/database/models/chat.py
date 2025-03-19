@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BIGINT, ForeignKey, String, TIMESTAMP, func, UniqueConstraint
+from sqlalchemy import BIGINT, ForeignKey, String, TIMESTAMP, func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -31,7 +31,7 @@ class ChatMessage(Base):
 
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     chat_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('chat.id', ondelete="CASCADE"), index=True)
-    user_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('users.id', ondelete="CASCADE"), index=True)
+    sender_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('users.id', ondelete="CASCADE"), index=True)
     text: Mapped[str] = mapped_column(String(2048))
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), index=True)
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), index=True)

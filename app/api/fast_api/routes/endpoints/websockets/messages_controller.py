@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import (
     APIRouter,
     Depends,
+    Path,
     Query,
     WebSocket,
     WebSocketDisconnect,
@@ -27,8 +28,8 @@ from app.api.fast_api.routes.endpoints.websockets.manager import websocket_manag
 router = APIRouter(prefix='/messages')
 
 
-@router.post('/chat_messages/{target_user_id}', response_model=ChatMessagePublic)
-async def start_chat(target_user_id: Annotated[int, Query(gt=0)],
+@router.post('/start_chat/{target_user_id}', response_model=ChatMessagePublic)
+async def start_chat(target_user_id: Annotated[int, Path(gt=0)],
                      user: User = Depends(get_current_user),
                      service: ChatService = Depends(get_chat_service)):
     try:
@@ -79,9 +80,11 @@ async def send_message(websocket: WebSocket,
             data = await websocket.receive_text()
             await websocket_manager.broadcast(data, chat_id, user.id)
             message = ChatMessageCreate(chat_id=chat_id,
-                                        first_user_id=user.id,
-                                        second_user_id=2,
+                                        sender_id=user.id,
                                         text=data)
-            await message_service.create_message(message)
+            try:
+                await message_service.create_message(message)
+            except ChatDoesNotExist:
+                await websocket.close(code=1008)
     except WebSocketDisconnect:
         websocket_manager.disconnect(chat_id, user.id)
