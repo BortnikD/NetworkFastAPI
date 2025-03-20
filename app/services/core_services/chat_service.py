@@ -6,7 +6,6 @@ from app.domain.repositories.chat import IChat
 from app.domain.repositories.chat_message import IChatMessage
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
 from app.infrastructure.database.models.chat import Chat, ChatMessage
-from app.domain.exceptions.chat import ChatDoesNotExist
 
 
 class ChatService:
@@ -35,8 +34,8 @@ class ChatService:
         return await self.chat_port.get_all_by_user_id(current_user_id, offset, limit)
 
 
-    async def get_chat_messages(self, user_id: int, chat_id: int, offset: int = 0, limit: int = 20) -> PaginatedResponse | None:
-        if self.is_user_chat(user_id, chat_id):
+    async def get_chat_messages(self, user_id: int, chat_id: int, offset: int, limit: int) -> PaginatedResponse | None:
+        if await self.is_user_chat(user_id, chat_id):
             return await self.chat_message_port.get_by_chat_id(chat_id, offset, limit)
         else:
             raise HTTPException(status_code=403, detail="You have no access rights")
