@@ -8,5 +8,6 @@ class ImageIsEmptyError(DomainError):
 class ImageUploadError(DomainError):
     pass
 
+
 class ImageNotFoundError(DomainError):
     pass

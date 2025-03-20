@@ -5,7 +5,7 @@ class UserDoesNotExist(DomainError):
     pass
 
 
-class UserIsAlreadyExist(DomainError):
+class UserAlreadyExists(DomainError):
     pass
 
 

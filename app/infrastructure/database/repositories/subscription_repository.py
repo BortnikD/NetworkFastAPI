@@ -10,7 +10,7 @@ from app.domain.dto.pagination import PaginatedResponse
 from app.domain.dto.subscription import SubscriptionPublic
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.subscription import (
-    SubscriptionIsAlreadyExist,
+    SubscriptionAlreadyExists,
     SubscriptionDoesNotExist,
     SubscriptionDeleteError
 )
@@ -67,7 +67,7 @@ class SubscriptionRepository(ISubscription):
         except IntegrityError:
             await self.db.rollback()
             logging.error('Error creating subscription')
-            raise SubscriptionIsAlreadyExist('Subscription already exists')
+            raise SubscriptionAlreadyExists('Subscription already exists')
 
     async def delete(self, subscription_id: int, current_user_id: int) -> None:
         result = await self.db.execute(select(Subscription).filter(Subscription.id == subscription_id))

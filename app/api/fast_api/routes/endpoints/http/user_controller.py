@@ -6,7 +6,7 @@ from app.domain.dto.pagination import UsersPagination, PaginatedResponse
 from app.domain.dto.user import UserCreate, UserPublic
 from app.domain.exceptions.user import (
     UserDoesNotExist,
-    UserIsAlreadyExist,
+    UserAlreadyExists,
     UserCreateError
 )
 
@@ -24,7 +24,7 @@ async def create_user(
     """Создание нового пользователя."""
     try:
         return await service.save(user_create)
-    except UserIsAlreadyExist as e:
+    except UserAlreadyExists as e:
         raise HTTPException(status_code=409, detail=e.message)
     except UserCreateError as e:
         raise HTTPException(status_code=500, detail=e.message)

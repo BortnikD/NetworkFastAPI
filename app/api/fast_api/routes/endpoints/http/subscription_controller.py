@@ -5,7 +5,7 @@ from app.domain.dto.pagination import LikePagination
 from app.domain.dto.subscription import SubscriptionPublic
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.subscription import (
-    SubscriptionIsAlreadyExist,
+    SubscriptionAlreadyExists,
     SubscriptionDoesNotExist,
     SubscriptionDeleteError
 )
@@ -40,7 +40,7 @@ async def create_subscription(
     """Создать подписку на пользователя."""
     try:
         return await service.save(current_user.id, followed_user_id)
-    except SubscriptionIsAlreadyExist as e:
+    except SubscriptionAlreadyExists as e:
         raise HTTPException(status_code=409, detail=e.message)
 
 

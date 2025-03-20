@@ -1,7 +1,7 @@
 from app.domain.exceptions.base import DomainError
 
 
-class SubscriptionIsAlreadyExist(DomainError):
+class SubscriptionAlreadyExists(DomainError):
     pass
 
 

@@ -10,7 +10,7 @@ from app.domain.dto.user import UserCreate, UserPublic
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.user import (
     UserDoesNotExist,
-    UserIsAlreadyExist,
+    UserAlreadyExists,
     UserCreateError
 )
 
@@ -50,7 +50,7 @@ class UserRepository(IUser):  # Реализуем интерфейс IUser
         except IntegrityError:
             await self.db.rollback()
             logging.error(f"An error occurred while creating user")
-            raise UserIsAlreadyExist("Пользователь с таким email или username уже существует.")
+            raise UserAlreadyExists("Пользователь с таким email или username уже существует.")
         except SQLAlchemyError as e:
             await self.db.rollback()
             logging.error(str(e))
