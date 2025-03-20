@@ -2,8 +2,8 @@ import logging
 from fastapi import APIRouter, FastAPI
 
 from .endpoints.http import profile_controller, image_controller, post_controller, user_controller, auth_controller, \
-    comment_controller, like_controller, subscription_controller
-from .endpoints.websockets import messages_controller
+    comment_controller, like_controller, subscription_controller, messages_controller
+from .endpoints.websockets import messages
 from app.infrastructure.settings.config import BASE_URL
 
 
@@ -41,4 +41,10 @@ def setup_routers(app: FastAPI):
         auth_controller.router,
         tags=['auth']
     )
+
+    ws_router = APIRouter(
+        prefix="/messages"
+    )
+    ws_router.include_router(messages.router)
+
     logging.info(f'All routers are configured on {BASE_URL}/docs')
