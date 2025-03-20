@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.exceptions.base import AccessError
 from app.domain.repositories.chat import IChat
-from app.domain.dto.chat import ChatCreate
+from app.domain.dto.chat import ChatCreate, ChatPublic
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.chat import (
     ChatDoesNotExist,
@@ -70,7 +70,7 @@ class ChatRepository(IChat):
             count=count,
             prev=prev_page,
             next=next_page,
-            results=list(chats),
+            results=[ChatPublic.model_validate(chat) for chat in chats],
         )
 
     async def delete(self, chat_id: int, current_user_id: int) -> None:
