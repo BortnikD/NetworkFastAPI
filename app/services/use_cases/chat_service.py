@@ -9,7 +9,10 @@ from app.infrastructure.database.models.chat import Chat, ChatMessage
 
 
 class ChatService:
-    def __init__(self, chat_port: IChat, chat_message_port: IChatMessage) -> None:
+    def __init__(self, 
+                 chat_port: IChat, 
+                 chat_message_port: IChatMessage,
+                 ) -> None:
         self.chat_port = chat_port
         self.chat_message_port = chat_message_port
 

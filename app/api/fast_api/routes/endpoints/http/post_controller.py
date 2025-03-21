@@ -12,7 +12,7 @@ from app.domain.exceptions.post import (
     PostUpdateError
 )
 
-from app.services.core_services.post_service import PostService
+from app.services.use_cases.post_service import PostService
 from app.dependencies.auth import get_current_active_user
 from app.dependencies.services.post import get_post_service
 

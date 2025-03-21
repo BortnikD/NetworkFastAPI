@@ -15,7 +15,7 @@ from app.domain.dto.pagination import PaginatedResponse, MessagePagination
 from app.dependencies.auth import get_current_user
 from app.dependencies.services.chat import get_chat_service
 
-from app.services.core_services.chat_service import ChatService
+from app.services.use_cases.chat_service import ChatService
 
 from app.infrastructure.database.models import User
 

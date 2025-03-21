@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.services.core_services.like_service import LikeService
+from app.services.use_cases.like_service import LikeService
 from app.infrastructure.database.repositories.like_repository import LikeRepository
 from app.dependencies.db import get_db
 

@@ -10,7 +10,7 @@ from app.domain.exceptions.user import (
     UserCreateError
 )
 
-from app.services.core_services.user_service import UserService
+from app.services.use_cases.user_service import UserService
 from app.dependencies.services.user import get_user_service
 
 router = APIRouter(prefix='/users')

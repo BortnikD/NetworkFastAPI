@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.services.core_services.chat_service import ChatService
+from app.services.use_cases.chat_service import ChatService
 from app.infrastructure.database.repositories.chat_repository import ChatRepository
 from app.infrastructure.database.repositories.chat_message_repository import ChatMessageRepository
 from app.dependencies.db import get_db
