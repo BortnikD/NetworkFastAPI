@@ -10,7 +10,7 @@ from app.domain.exceptions.subscription import (
     SubscriptionDeleteError
 )
 
-from app.services.core_services.subscription_service import SubscriptionService
+from app.services.use_cases.subscription_service import SubscriptionService
 from app.dependencies.auth import get_current_active_user
 from app.dependencies.services.subscription import get_subscription_service
 from app.infrastructure.database.models import User
