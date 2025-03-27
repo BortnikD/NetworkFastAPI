@@ -1,8 +1,8 @@
-"""Initial migration
+"""reinit migrations
 
-Revision ID: 08084a0b5d47
+Revision ID: 546fbcf767b0
 Revises:
-Create Date: 2025-02-22 15:59:19.943030
+Create Date: 2025-03-27 12:05:01.059483
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "08084a0b5d47"
+revision: str = "546fbcf767b0"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,11 +42,37 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
+        sa.Column("is_superuser", sa.Boolean(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
     op.create_index(
         op.f("ix_users_username"), "users", ["username"], unique=True
+    )
+    op.create_table(
+        "chat",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column("first_user_id", sa.BIGINT(), nullable=False),
+        sa.Column("second_user_id", sa.BIGINT(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["first_user_id"], ["users.id"], ondelete="CASCADE"
+        ),
+        sa.ForeignKeyConstraint(
+            ["second_user_id"], ["users.id"], ondelete="CASCADE"
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint(
+            "first_user_id", "second_user_id", name="unique_chat_users"
+        ),
+    )
+    op.create_index(
+        op.f("ix_chat_first_user_id"), "chat", ["first_user_id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_chat_second_user_id"),
+        "chat",
+        ["second_user_id"],
+        unique=False,
     )
     op.create_table(
         "posts",
@@ -112,6 +138,54 @@ def upgrade() -> None:
         op.f("ix_subscriptions_follower_id"),
         "subscriptions",
         ["follower_id"],
+        unique=False,
+    )
+    op.create_table(
+        "chat_messages",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column("chat_id", sa.BIGINT(), nullable=False),
+        sa.Column("sender_id", sa.BIGINT(), nullable=False),
+        sa.Column("text", sa.String(length=2048), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(["chat_id"], ["chat.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["sender_id"], ["users.id"], ondelete="CASCADE"
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_chat_messages_chat_id"),
+        "chat_messages",
+        ["chat_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_chat_messages_created_at"),
+        "chat_messages",
+        ["created_at"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_chat_messages_sender_id"),
+        "chat_messages",
+        ["sender_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_chat_messages_updated_at"),
+        "chat_messages",
+        ["updated_at"],
         unique=False,
     )
     op.create_table(
@@ -222,6 +296,17 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_comments_created_at"), table_name="comments")
     op.drop_table("comments")
     op.drop_index(
+        op.f("ix_chat_messages_updated_at"), table_name="chat_messages"
+    )
+    op.drop_index(
+        op.f("ix_chat_messages_sender_id"), table_name="chat_messages"
+    )
+    op.drop_index(
+        op.f("ix_chat_messages_created_at"), table_name="chat_messages"
+    )
+    op.drop_index(op.f("ix_chat_messages_chat_id"), table_name="chat_messages")
+    op.drop_table("chat_messages")
+    op.drop_index(
         op.f("ix_subscriptions_follower_id"), table_name="subscriptions"
     )
     op.drop_index(
@@ -231,6 +316,9 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_posts_user_id"), table_name="posts")
     op.drop_index(op.f("ix_posts_created_at"), table_name="posts")
     op.drop_table("posts")
+    op.drop_index(op.f("ix_chat_second_user_id"), table_name="chat")
+    op.drop_index(op.f("ix_chat_first_user_id"), table_name="chat")
+    op.drop_table("chat")
     op.drop_index(op.f("ix_users_username"), table_name="users")
     op.drop_index(op.f("ix_users_email"), table_name="users")
     op.drop_table("users")
