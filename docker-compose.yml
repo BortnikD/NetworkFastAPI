@@ -19,6 +19,20 @@ services:
       retries: 5
       timeout: 3s
 
+  redis:
+    image: redis:7
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
   app:
     build: .
     container_name: fastapi_app
@@ -26,8 +40,11 @@ services:
       - "8000:8000"
     environment:
       - DB_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${DATABASE}
+      - REDIS_URL=redis://redis:6379
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - app_network
@@ -37,6 +54,8 @@ services:
     env_file:
       - .env
     command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+
 
 networks:
   app_network:
