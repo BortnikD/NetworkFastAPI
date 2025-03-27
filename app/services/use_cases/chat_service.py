@@ -45,7 +45,7 @@ class ChatService:
         if await self.is_user_chat(user_id, chat_id):
             cache_messages = await self.cache_port.get_cache(f'{self.cache_path}:{chat_id}')
             if cache_messages is not None:
-                return cache_messages
+                return PaginatedResponse(**cache_messages)
             else:
                 messages = await self.chat_message_port.get_by_chat_id(chat_id, offset, limit)
                 await self.cache_port.set_cache(f'{self.cache_path}:{chat_id}', messages)
