@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.domain.dto.profile import ProfilePublic
 from app.domain.exceptions.user import UserDoesNotExist
 
-from app.services.use_cases.profile_service import ProfileService
+from app.services.core_services.profile_service import ProfileService
 from app.dependencies.services.profile import get_profile_service
 
 router = APIRouter(prefix='/profiles')

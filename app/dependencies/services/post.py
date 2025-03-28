@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.services.use_cases.post_service import PostService
+from app.services.core_services.post_service import PostService
 from app.infrastructure.database.repositories.post_repository import PostRepository
 from app.dependencies.db import get_db
 

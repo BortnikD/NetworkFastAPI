@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.services.use_cases.profile_service import ProfileService
+from app.services.core_services.profile_service import ProfileService
 from app.infrastructure.database.repositories.profile_repository import ProfileRepository
 from app.dependencies.db import get_db
 

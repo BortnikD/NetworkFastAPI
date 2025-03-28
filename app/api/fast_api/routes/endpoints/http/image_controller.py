@@ -19,7 +19,7 @@ from app.domain.exceptions.image import (
 
 from app.infrastructure.settings.config import POSTS_IMAGES_DIR, BASE_URL
 from app.infrastructure.database.models.user import User
-from app.services.use_cases.image_service import ImageService
+from app.services.core_services.image_service import ImageService
 from app.dependencies.services.image import get_image_service
 from app.dependencies.auth import get_current_user
 

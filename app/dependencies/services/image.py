@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.services.use_cases.image_service import ImageService
+from app.services.core_services.image_service import ImageService
 from app.infrastructure.database.repositories.image_repository import ImageRepository
 from app.dependencies.db import get_db
 

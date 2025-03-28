@@ -10,7 +10,7 @@ from app.domain.exceptions.like import (
 )
 
 from app.infrastructure.database.models.user import User
-from app.services.use_cases.like_service import LikeService
+from app.services.core_services.like_service import LikeService
 from app.dependencies.services.like import get_like_service
 from app.dependencies.auth import get_current_active_user
 

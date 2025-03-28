@@ -12,8 +12,8 @@ from app.domain.dto.chat import ChatMessageCreate
 from app.dependencies.services.user import get_user_service
 from app.dependencies.services.chat import get_chat_service
 
-from app.services.use_cases.chat_service import ChatService
-from app.services.use_cases.user_service import UserService
+from app.services.core_services.chat_service import ChatService
+from app.services.core_services.user_service import UserService
 
 from app.api.fast_api.routes.endpoints.websockets.manager import websocket_manager
 

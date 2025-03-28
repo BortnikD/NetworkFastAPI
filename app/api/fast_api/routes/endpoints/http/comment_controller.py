@@ -21,7 +21,7 @@ from app.domain.exceptions.comment import (
 )
 
 from app.infrastructure.database.models.user import User
-from app.services.use_cases.comment_service import CommentService
+from app.services.core_services.comment_service import CommentService
 from app.dependencies.services.comment import get_comment_service
 from app.dependencies.auth import get_current_active_user
 
