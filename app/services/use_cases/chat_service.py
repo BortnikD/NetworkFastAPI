@@ -4,16 +4,16 @@ from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.repositories.chat import IChat
 from app.domain.repositories.chat_message import IChatMessage
+from app.domain.repositories.redis import IRedis
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
 from app.infrastructure.database.models.chat import Chat, ChatMessage
-from app.infrastructure.database.repositories.redis_repository import RedisRepository
 
 
 class ChatService:
     def __init__(self, 
                  chat_port: IChat, 
                  chat_message_port: IChatMessage,
-                 cache_port: RedisRepository
+                 cache_port: IRedis
                  ) -> None:
         self.chat_port = chat_port
         self.chat_message_port = chat_message_port

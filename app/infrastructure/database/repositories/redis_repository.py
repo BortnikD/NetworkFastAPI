@@ -4,8 +4,10 @@ import logging
 from pydantic import BaseModel
 from redis.asyncio import Redis
 
+from app.domain.repositories.redis import IRedis
 
-class RedisRepository:
+
+class RedisRepository(IRedis):
     def __init__(self, redis: Redis):
         self.cache = redis
 
