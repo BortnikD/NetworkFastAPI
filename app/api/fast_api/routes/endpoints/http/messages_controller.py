@@ -9,7 +9,7 @@ from fastapi import (
 )
 
 from app.domain.exceptions.chat import ChatDoesNotExist, ChatAlreadyExists
-from app.domain.dto.chat import  ChatMessagePublic
+from app.domain.dto.chat import ChatPublic
 from app.domain.dto.pagination import PaginatedResponse, MessagePagination
 
 from app.dependencies.auth import get_current_user
@@ -22,7 +22,7 @@ from app.infrastructure.database.models import User
 router = APIRouter(prefix='/messages')
 
 
-@router.post('/start_chat/{target_user_id}')
+@router.post('/start_chat/{target_user_id}', response_model=ChatPublic)
 async def start_chat(target_user_id: Annotated[int, Path(gt=0)],
                      user: User = Depends(get_current_user),
                      service: ChatService = Depends(get_chat_service)):
