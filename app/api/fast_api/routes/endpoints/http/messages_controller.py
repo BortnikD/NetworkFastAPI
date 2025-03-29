@@ -22,7 +22,7 @@ from app.infrastructure.database.models import User
 router = APIRouter(prefix='/messages')
 
 
-@router.post('/start_chat/{target_user_id}', response_model=ChatMessagePublic)
+@router.post('/start_chat/{target_user_id}')
 async def start_chat(target_user_id: Annotated[int, Path(gt=0)],
                      user: User = Depends(get_current_user),
                      service: ChatService = Depends(get_chat_service)):
