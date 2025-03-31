@@ -32,5 +32,5 @@ class RedisRepository(IRedis):
 
     async def set_cache(self, path: str, value: BaseModel) -> None:
         json_value = json.dumps(value.model_dump())
-        await self.cache.setex(path, 3600, json_value)
+        await self.cache.setex(path, 600, json_value)
         logging.info(f"value={json_value} is cached")
