@@ -8,15 +8,20 @@ from fastapi import (
     HTTPException
 )
 
-from app.domain.exceptions.chat import ChatDoesNotExist, ChatAlreadyExists
-from app.domain.dto.chat import ChatPublic
+from app.domain.exceptions.base import AccessError
+from app.domain.exceptions.chat import (
+    ChatDoesNotExist,
+    ChatAlreadyExists,
+    MessageDeleteError,
+    MessageDoesNotExist,
+    MessageUpdateError
+)
+from app.domain.dto.chat import ChatPublic, ChatMessageUpdate, ChatMessagePublic
 from app.domain.dto.pagination import PaginatedResponse, MessagePagination
 
 from app.dependencies.auth import get_current_user
 from app.dependencies.services.chat import get_chat_service
-
 from app.services.core_services.chat_service import ChatService
-
 from app.infrastructure.database.models import User
 
 router = APIRouter(prefix='/messages')
@@ -50,3 +55,47 @@ async def get_chat_history(chat_id: int,
         return await message_service.get_chat_messages(user.id, chat_id, pagination.offset, pagination.limit)
     except ChatDoesNotExist as e:
         raise HTTPException(status_code=404, detail=e.message)
+
+
+@router.delete('/delete_chat/{chat_id}')
+async def delete_chat(chat_id: int,
+                      user: User = Depends(get_current_user),
+                      message_service: ChatService = Depends(get_chat_service)
+                      ) -> None:
+    try:
+        await message_service.delete_chat(user.id, chat_id)
+    except ChatDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
+    except MessageDeleteError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+
+
+@router.patch('/update_message/{message_id}', response_model=ChatMessagePublic)
+async def update_message(message: ChatMessageUpdate,
+                         user: User = Depends(get_current_user),
+                         message_service: ChatService = Depends(get_chat_service)):
+    try:
+        return await message_service.update_message(message, user.id)
+    except MessageDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
+    except MessageUpdateError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+
+
+@router.delete('/delete_message/{message_id}')
+async def delete_message(message_id: int,
+                         user: User = Depends(get_current_user),
+                         message_service: ChatService = Depends(get_chat_service)
+                         ) -> None:
+    try:
+        await message_service.delete_message(message_id, user.id)
+    except MessageDoesNotExist as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
+    except MessageDeleteError as e:
+        raise HTTPException(status_code=400, detail=e.message)
