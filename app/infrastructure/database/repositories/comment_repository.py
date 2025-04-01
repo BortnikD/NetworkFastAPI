@@ -1,12 +1,12 @@
 import logging
 
 from sqlalchemy import func
+from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
-from app.domain.repositories.comment import IComment
-from app.domain.dto.comment import CommentCreate, CommentPublic, CommentUpdate
+from app.domain.entities.comment import Comment as CommentEntity
+from app.domain.dto.comment import CommentCreate, CommentUpdate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.comment import (
@@ -15,17 +15,16 @@ from app.domain.exceptions.comment import (
     CommentUpdateError,
     CommentDeleteError
 )
-
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
-from app.infrastructure.database.models.comment import Comment
+from app.infrastructure.database.models.comment import Comment as CommentModel
 
 
-class CommentRepository(IComment):
+class CommentRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def save(self, comment: CommentCreate, current_user_id: int) -> Comment:
-        db_comment = Comment(
+    async def save(self, comment: CommentCreate, current_user_id: int) -> CommentEntity:
+        db_comment = CommentModel(
             text_content=comment.text_content,
             post_id=comment.post_id,
             user_id=current_user_id
@@ -34,67 +33,68 @@ class CommentRepository(IComment):
         try:
             await self.db.commit()
             await self.db.refresh(db_comment)
-            logging.info(f"Comment with id = {db_comment.id} by user = {db_comment.user_id} was successfully created")
-            return db_comment
-        except IntegrityError:
+            logging.info("Comment created successfully")
+            return CommentEntity.model_validate(db_comment)
+        except IntegrityError as e:
             await self.db.rollback()
-            logging.error(f"Error creating comment with post_id = {comment.post_id} and user_id = {current_user_id}.")
+            logging.error(f"Integrity error: {str(e)}")
             raise CommentCreateError("Error creating comment")
 
     async def get_all_by_post_id(self, post_id: int, offset: int, limit: int) -> PaginatedResponse:
-        count_result = await self.db.execute(select(func.count()).filter(Comment.post_id == post_id))
+        count_result = await self.db.execute(select(func.count()).filter(CommentModel.post_id == post_id))
         count = count_result.scalar()
 
-        result = await self.db.execute(select(Comment).filter(Comment.post_id == post_id).offset(offset).limit(limit))
-        comments = result.scalars().all()
+        result = await self.db.execute(
+            select(CommentModel).filter(CommentModel.post_id == post_id).offset(offset).limit(limit))
+        db_comments = result.scalars().all()
 
-        if comments:
-            comments = [CommentPublic.model_validate(comment) for comment in comments]
-            prev, next = get_prev_next_pages(offset, limit, count, "comments")
-            logging.info(f"Fetched {len(comments)} comments for post_id = {post_id}, offset = {offset}, limit = {limit}")
-            return PaginatedResponse(count=count, prev=prev, next=next, results=comments)
-        else:
-            logging.warning(f"No comments found for post_id = {post_id}")
+        if not db_comments:
+            logging.warning(f"No comments found for post_id={post_id}")
             return PaginatedResponse(count=count)
 
-    async def update(self, comment: CommentUpdate, current_user_id: int) -> Comment:
-        result = await self.db.execute(select(Comment).filter(Comment.id == comment.id))
+        comments = [CommentEntity.model_validate(db_comment) for db_comment in db_comments]
+        prev_page, next_page = get_prev_next_pages(offset, limit, count, "comments")
+        logging.info(f"Fetched {len(comments)} comments for post_id={post_id}")
+        return PaginatedResponse(count=count, prev=prev_page, next=next_page, results=comments)
+
+    async def update(self, comment: CommentUpdate, current_user_id: int) -> CommentEntity:
+        result = await self.db.execute(select(CommentModel).filter(CommentModel.id == comment.id))
         db_comment = result.scalars().first()
 
         if not db_comment:
-            logging.error(f"Comment with id = {comment.id} not found for update.")
+            logging.error(f"Comment with id={comment.id} not found")
             raise CommentDoesNotExist("This comment doesn't exist")
         if db_comment.user_id != current_user_id:
-            logging.warning(f"User {current_user_id} attempted to update comment with id = {comment.id}, but has no access.")
+            logging.warning(f"User {current_user_id} has no access to update comment id={comment.id}")
             raise AccessError("You do not have access rights")
 
         try:
             db_comment.text_content = comment.text_content
             await self.db.commit()
             await self.db.refresh(db_comment)
-            logging.info(f"Comment with id = {comment.id} successfully updated")
-            return db_comment
-        except IntegrityError:
+            logging.info("Comment updated successfully")
+            return CommentEntity.model_validate(db_comment)
+        except IntegrityError as e:
             await self.db.rollback()
-            logging.error(f"IntegrityError while updating comment with id = {comment.id}")
+            logging.error(f"Integrity error: {str(e)}")
             raise CommentUpdateError("Error updating comment")
 
     async def delete(self, comment_id: int, current_user_id: int) -> None:
-        result = await self.db.execute(select(Comment).filter(Comment.id == comment_id))
-        comment = result.scalars().first()
+        result = await self.db.execute(select(CommentModel).filter(CommentModel.id == comment_id))
+        db_comment = result.scalars().first()
 
-        if not comment:
-            logging.error(f"Comment with id = {comment_id} not found for deletion.")
+        if not db_comment:
+            logging.error(f"Comment with id={comment_id} not found")
             raise CommentDoesNotExist("This comment doesn't exist")
-        if comment.user_id != current_user_id:
-            logging.warning(f"User {current_user_id} attempted to delete comment with id = {comment_id}, but has no access.")
+        if db_comment.user_id != current_user_id:
+            logging.warning(f"User {current_user_id} has no access to delete comment id={comment_id}")
             raise AccessError("You do not have access rights")
 
         try:
-            await self.db.delete(comment)
+            await self.db.delete(db_comment)
             await self.db.commit()
-            logging.info(f"Comment with id = {comment_id} successfully deleted")
-        except IntegrityError:
+            logging.info("Comment deleted successfully")
+        except IntegrityError as e:
             await self.db.rollback()
-            logging.error(f"IntegrityError while deleting comment with id = {comment_id}")
+            logging.error(f"Integrity error: {str(e)}")
             raise CommentDeleteError("Error deleting comment")

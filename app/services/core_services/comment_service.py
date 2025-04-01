@@ -1,7 +1,7 @@
 from app.domain.repositories.comment import IComment
-from app.infrastructure.database.models.comment import Comment
 from app.domain.dto.comment import CommentCreate, CommentUpdate
 from app.domain.dto.pagination import PaginatedResponse
+from app.domain.entities.comment import Comment
 
 
 class CommentService:
