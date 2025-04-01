@@ -10,8 +10,3 @@ class LikeCreate(LikeBase):
     pass
 
 
-class LikePublic(LikeBase):
-    id: int
-    user_id: int
-    created_at: datetime
-
