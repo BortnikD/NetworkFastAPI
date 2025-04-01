@@ -1,8 +1,8 @@
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.user import UserDoesNotExist
-from app.infrastructure.database.models.user import User
 from app.domain.dto.user import UserCreate
 from app.domain.repositories.user import IUser
+from app.domain.entities.user import User
 from app.infrastructure.settings.security import decode_access_token
 
 
@@ -22,7 +22,7 @@ class UserService:
     async def get_by_email(self, email: str) -> User:
         return await self.user_port.get_by_email(email)
 
-    async def get_by_token(self, token: str) -> User | None:
+    async def get_by_token(self, token: str) -> User:
         email = decode_access_token(token)
         if not email:
             raise UserDoesNotExist("email is empty")
