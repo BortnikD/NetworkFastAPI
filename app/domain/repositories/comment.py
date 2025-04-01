@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repositories.entities.comment import Comment
+from app.domain.entities.comment import Comment
 from app.domain.dto.comment import CommentCreate, CommentUpdate
 
 

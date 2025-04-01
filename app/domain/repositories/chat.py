@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repositories.entities.chat import Chat
+from app.domain.entities.chat import Chat
 from app.domain.dto.chat import ChatCreate
 
 

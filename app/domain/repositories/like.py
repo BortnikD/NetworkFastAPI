@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repositories.entities.like import Like
+from app.domain.entities import Like
 
 
 class ILike(ABC):

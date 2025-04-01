@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.repositories.entities.user import User
+from app.domain.entities import User
 from app.domain.dto.user import UserCreate
 
 
