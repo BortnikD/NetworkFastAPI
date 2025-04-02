@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -12,3 +14,5 @@ class ChatMessage(BaseModel):
     chat_id: int
     user_id: int
     text: str
+    created_at: datetime
+    updated_at: datetime
