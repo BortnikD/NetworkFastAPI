@@ -10,7 +10,8 @@ from fastapi import (
 )
 from starlette.responses import FileResponse
 
-from app.domain.dto.image import Image, CreateImage
+from app.domain.entities.image import Image
+from app.domain.dto.image import CreateImage
 from app.domain.exceptions.image import (
     ImageIsEmptyError,
     ImageUploadError,
@@ -32,7 +33,7 @@ async def upload_image(
         file: UploadFile = File(...),
         current_user: User = Depends(get_current_user),
         image_service: ImageService = Depends(get_image_service)
-):
+        ):
     """Загрузка изображения и сохранение ссылки в БД."""
 
     user_folder = os.path.join(POSTS_IMAGES_DIR, current_user.username)
@@ -81,11 +82,11 @@ async def download_file(file_path: str):
     return FileResponse(requested_path)
 
 
-@router.get('/get_sources/{post_id}', response_model=list[Image])
+@router.get('/get_sources/{post_id}')
 async def get_sources_by_post_id(
         post_id: int,
         image_service: ImageService = Depends(get_image_service)
-):
+        ) -> list[Image]:
     """Получение списка изображений по ID поста."""
     try:
         return await image_service.get_sources_by_post_id(post_id)

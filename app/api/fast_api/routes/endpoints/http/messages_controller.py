@@ -16,8 +16,9 @@ from app.domain.exceptions.chat import (
     MessageDoesNotExist,
     MessageUpdateError
 )
-from app.domain.dto.chat import ChatPublic, ChatMessageUpdate, ChatMessagePublic
+from app.domain.dto.chat import ChatMessageUpdate
 from app.domain.dto.pagination import PaginatedResponse, MessagePagination
+from app.domain.entities.chat import Chat, ChatMessage
 
 from app.dependencies.auth import get_current_user
 from app.dependencies.services.chat import get_chat_service
@@ -27,10 +28,11 @@ from app.infrastructure.database.models import User
 router = APIRouter(prefix='/messages')
 
 
-@router.post('/start_chat/{target_user_id}', response_model=ChatPublic)
+@router.post('/start_chat/{target_user_id}')
 async def start_chat(target_user_id: Annotated[int, Path(gt=0)],
                      user: User = Depends(get_current_user),
-                     service: ChatService = Depends(get_chat_service)):
+                     service: ChatService = Depends(get_chat_service)
+                     ) -> Chat:
     try:
         return await service.init_chat(user.id, target_user_id)
     except ChatAlreadyExists as e:
@@ -72,10 +74,11 @@ async def delete_chat(chat_id: int,
         raise HTTPException(status_code=400, detail=e.message)
 
 
-@router.patch('/update_message/{message_id}', response_model=ChatMessagePublic)
+@router.patch('/update_message/{message_id}')
 async def update_message(message: ChatMessageUpdate,
                          user: User = Depends(get_current_user),
-                         message_service: ChatService = Depends(get_chat_service)):
+                         message_service: ChatService = Depends(get_chat_service)
+                         ) -> ChatMessage:
     try:
         return await message_service.update_message(message, user.id)
     except MessageDoesNotExist as e:

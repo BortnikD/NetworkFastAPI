@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, Query, Body, HTTPException
 from typing import Annotated
 
 from app.domain.dto.user import UserPublic
-from app.domain.dto.post import PostCreate, PostPublic, PostUpdate
+from app.domain.dto.post import PostCreate, PostUpdate
+from app.domain.entities.post import Post
 from app.domain.dto.pagination import PaginatedResponse, PostPagination
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.post import (
@@ -19,21 +20,21 @@ from app.dependencies.services.post import get_post_service
 router = APIRouter(prefix='/posts')
 
 
-@router.get('/', response_model=PaginatedResponse)
+@router.get('/')
 async def read_posts(
-    pagination: Annotated[PostPagination, Query()],
-    post_service: PostService = Depends(get_post_service)
-):
+        pagination: Annotated[PostPagination, Query()],
+        post_service: PostService = Depends(get_post_service)
+        ) -> PaginatedResponse:
     """Получение списка постов с пагинацией."""
     return await post_service.get_all_posts(pagination.offset, pagination.limit)
 
 
-@router.post('/', response_model=PostPublic)
+@router.post('/')
 async def create_post(
-    text_content: str = Body(...),
-    current_user: UserPublic = Depends(get_current_active_user),
-    post_service: PostService = Depends(get_post_service)
-):
+        text_content: str = Body(...),
+        current_user: UserPublic = Depends(get_current_active_user),
+        post_service: PostService = Depends(get_post_service)
+        ) -> Post:
     """Создание нового поста."""
     try:
         post = PostCreate(text_content=text_content, user_id=current_user.id)
@@ -44,10 +45,10 @@ async def create_post(
 
 @router.delete('/{post_id}')
 async def delete_post(
-    post_id: int,
-    current_user: UserPublic = Depends(get_current_active_user),
-    post_service: PostService = Depends(get_post_service)
-):
+        post_id: int,
+        current_user: UserPublic = Depends(get_current_active_user),
+        post_service: PostService = Depends(get_post_service)
+        ) -> None:
     """Удаление поста пользователя."""
     try:
         return await post_service.delete(post_id, current_user.id)
@@ -59,12 +60,12 @@ async def delete_post(
         raise HTTPException(status_code=403, detail=e.message)
 
 
-@router.patch('/', response_model=PostPublic)
+@router.patch('/')
 async def update_post(
-    post: PostUpdate,
-    current_user: UserPublic = Depends(get_current_active_user),
-    post_service: PostService = Depends(get_post_service)
-):
+        post: PostUpdate,
+        current_user: UserPublic = Depends(get_current_active_user),
+        post_service: PostService = Depends(get_post_service)
+        ) -> Post:
     """Обновление поста."""
     try:
         return await post_service.update(post, current_user.id)

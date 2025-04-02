@@ -1,13 +1,14 @@
 import logging
 
 from sqlalchemy import func
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
-from app.domain.repositories.post import IPost
-from app.domain.dto.post import PostCreate, PostPublic, PostUpdate
+from app.domain.dto.post import PostCreate, PostUpdate
 from app.domain.dto.pagination import PaginatedResponse
+from app.domain.entities.post import Post as PostEntity
+from app.domain.repositories.post import IPost
 from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.post import (
     PostCreateError,
@@ -16,39 +17,47 @@ from app.domain.exceptions.post import (
     PostUpdateError
 )
 
+from app.infrastructure.database.models.post import Post as PostModel
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
-from app.infrastructure.database.models.post import Post
 
 
 class PostRepository(IPost):
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def save(self, post: PostCreate) -> Post:
-        db_post = Post(
-            user_id=post.user_id,
-            text_content=post.text_content
+    async def save(self, post_create: PostCreate) -> PostEntity:
+        db_post = PostModel(
+            text_content=post_create.text_content,
+            user_id=post_create.user_id
         )
         self.db.add(db_post)
+
         try:
             await self.db.commit()
             await self.db.refresh(db_post)
-            return db_post
-        except IntegrityError:
+            logging.info(f"Post created by user_id={post_create.user_id}")
+            return PostEntity.model_validate(db_post)
+        except SQLAlchemyError as e:
             await self.db.rollback()
-            raise PostCreateError("Ошибка при попытке создания поста в бд")
+            logging.error(f"Error creating post: {str(e)}")
+            raise PostCreateError("Error creating post")
 
     async def get_all_posts(self, offset: int, limit: int) -> PaginatedResponse:
-        count_result = await self.db.execute(select(func.count()).select_from(Post))
+        count_result = await self.db.execute(select(func.count()).select_from(PostModel))
         count = count_result.scalar()
 
-        result = await self.db.execute(select(Post).offset(offset).limit(limit).order_by(Post.created_at.desc()))
+        result = await self.db.execute(
+            select(PostModel)
+            .order_by(PostModel.created_at.desc())
+            .offset(offset)
+            .limit(limit)
+        )
         posts = result.scalars().all()
 
         if posts:
-            posts = [PostPublic.model_validate(post) for post in posts]
+            posts = [PostEntity.model_validate(post) for post in posts]
             prev_page, next_page = get_prev_next_pages(offset, limit, count, 'posts')
-            logging.info(f'posts issued all posts count = {count}')
+            logging.info(f"Posts retrieved with count={count}")
             return PaginatedResponse(
                 count=count,
                 prev=prev_page,
@@ -56,50 +65,63 @@ class PostRepository(IPost):
                 results=posts
             )
         else:
-            logging.warning(f'posts not issued count = {count}')
+            logging.warning("No posts found")
             return PaginatedResponse(count=count)
 
-    async def get_post(self, post_id: int) -> Post:
-        result = await self.db.execute(select(Post).filter(Post.id == post_id))
-        post = result.scalars().first()
+    async def get_post(self, post_id: int) -> PostEntity:
+        result = await self.db.execute(
+            select(PostModel).filter(PostModel.id == post_id)
+        )
+        post = result.scalar()
         if not post:
-            logging.error(f'Пост с id {post_id} не найден')
-            raise PostDoesNotExist(f'Пост с id {post_id} не найден')
-        return post
+            logging.error(f"Post with id={post_id} not found")
+            raise PostDoesNotExist("Post does not exist")
+        return PostEntity.model_validate(post)
 
-    async def delete(self, post_id: int, current_user_id: int) -> None:
-        result = await self.db.execute(select(Post).filter(Post.id == post_id))
-        post_to_delete = result.scalars().first()
-        if post_to_delete is None:
-            logging.warning(f"Пост с id {post_id} не найден")
-            raise PostDoesNotExist(f'Пост с id {post_id} не найден')
-        if post_to_delete.user_id != current_user_id:
-            logging.warning(f'user with id = {current_user_id} tried to delete post with id = {post_id}')
-            raise AccessError("You do not have access rights")
-        try:
-            await self.db.delete(post_to_delete)
-            await self.db.commit()
-            logging.info(f'success deleted post with id = {post_id}')
-        except SQLAlchemyError:
-            await self.db.rollback()
-            logging.error(f'Ошибка при удалении поста с post_id={post_id}')
-            raise PostDeleteError(f'Ошибка при удалении поста с post_id={post_id}')
+    async def delete(self, post_id: int, user_id: int) -> None:
+        result = await self.db.execute(
+            select(PostModel).filter(PostModel.id == post_id)
+        )
+        post = result.scalar()
 
-    async def update(self, post: PostUpdate, current_user_id: int) -> Post:
-        result = await self.db.execute(select(Post).filter(Post.id == post.id))
-        db_post = result.scalars().first()
-        if db_post is None:
-            logging.warning(f"Пост с id {post.id} не найден")
-            raise PostDoesNotExist(f"Пост с id {post.id} не найден")
-        if db_post.user_id != current_user_id:
-            logging.warning(f'user with id = {current_user_id} tried to update post with id = {post.id}')
-            raise AccessError("You do not have access rights")
+        if not post:
+            logging.error(f"Post with id={post_id} not found")
+            raise PostDoesNotExist("Post does not exist")
+
+        if post.user_id != user_id:
+            logging.warning(f"User {user_id} attempted to delete post {post_id} without permission")
+            raise AccessError("You don't have permission to delete this post")
+
         try:
-            db_post.text_content = post.text_content
+            await self.db.delete(post)
             await self.db.commit()
-            logging.info(f'success updated post with id = {post.id}')
-            return db_post
-        except IntegrityError:
+            logging.info(f"Post {post_id} deleted by user {user_id}")
+        except SQLAlchemyError as e:
             await self.db.rollback()
-            logging.error(f'Ошибка при изменении поста с post_id={post.id}')
-            raise PostUpdateError(f'Ошибка при изменении поста с post_id={post.id}')
+            logging.error(f"Error deleting post: {str(e)}")
+            raise PostDeleteError("Error deleting post")
+
+    async def update(self, post_update: PostUpdate, user_id: int) -> PostEntity:
+        result = await self.db.execute(
+            select(PostModel).filter(PostModel.id == post_update.id)
+        )
+        post = result.scalar()
+
+        if not post:
+            logging.error(f"Post with id={post_update.id} not found")
+            raise PostDoesNotExist("Post does not exist")
+
+        if post.user_id != user_id:
+            logging.warning(f"User {user_id} attempted to update post {post_update.id} without permission")
+            raise AccessError("You don't have permission to update this post")
+
+        try:
+            post.text_content = post_update.text_content
+            await self.db.commit()
+            await self.db.refresh(post)
+            logging.info(f"Post {post_update.id} updated by user {user_id}")
+            return PostEntity.model_validate(post)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logging.error(f"Error updating post: {str(e)}")
+            raise PostUpdateError("Error updating post")

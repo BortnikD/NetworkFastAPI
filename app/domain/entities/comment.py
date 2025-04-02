@@ -6,3 +6,6 @@ class Comment(BaseModel):
     user_id: int
     post_id: int
     text_content: str
+
+    class Config:
+        from_attributes = True

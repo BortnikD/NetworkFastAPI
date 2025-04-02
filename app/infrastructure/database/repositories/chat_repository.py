@@ -1,13 +1,13 @@
 import logging
-
 from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.entities.chat import Chat as ChatEntity
 from app.domain.exceptions.base import AccessError
 from app.domain.repositories.chat import IChat
-from app.domain.dto.chat import ChatCreate, ChatPublic
+from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.chat import (
     ChatDoesNotExist,
@@ -15,38 +15,37 @@ from app.domain.exceptions.chat import (
     ChatAlreadyExists,
 )
 
-from app.infrastructure.database.models.chat import Chat
+from app.infrastructure.database.models.chat import Chat as ChatModel
 from app.infrastructure.database.repositories.utils.pages import get_prev_next_pages
-
 
 
 class ChatRepository(IChat):
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def save(self, chat: ChatCreate) -> Chat:
-        new_chat = Chat(**chat.model_dump())
+    async def save(self, chat: ChatCreate) -> ChatEntity:
+        new_chat = ChatModel(**chat.model_dump())
         self.db.add(new_chat)
         try:
             await self.db.commit()
             await self.db.refresh(new_chat)
             logging.info(f"Чат с id={new_chat.id} успешно создан")
-            return new_chat
+            return ChatEntity.model_validate(new_chat)
         except IntegrityError as e:
             await self.db.rollback()
             logging.error(f"Ошибка целостности при создании чата: {str(e)}")
             raise ChatAlreadyExists("Ошибка при создании чата")
 
-    async def get_by_id(self, chat_id: int) -> Chat | None:
-        chat = await self.db.get(Chat, chat_id)
+    async def get_by_id(self, chat_id: int) -> ChatEntity:
+        chat = await self.db.get(ChatModel, chat_id)
         if not chat:
             logging.warning(f"Чат с id={chat_id} не существует")
             raise ChatDoesNotExist("Чат не существует")
         logging.info(f"Чат с id={chat_id} найден")
-        return chat
+        return ChatEntity.model_validate(chat)
 
     async def get_all_by_user_id(self, user_id: int, offset: int, limit: int) -> PaginatedResponse:
-        chat_filter = or_(Chat.first_user_id == user_id, Chat.second_user_id == user_id)
+        chat_filter = or_(ChatModel.first_user_id == user_id, ChatModel.second_user_id == user_id)
 
         count_result = await self.db.execute(select(func.count()).where(chat_filter))
         count = count_result.scalar()
@@ -56,7 +55,7 @@ class ChatRepository(IChat):
             return PaginatedResponse(count=count)
 
         chats_result = await self.db.execute(
-            select(Chat)
+            select(ChatModel)
             .where(chat_filter)
             .offset(offset)
             .limit(limit)
@@ -70,11 +69,11 @@ class ChatRepository(IChat):
             count=count,
             prev=prev_page,
             next=next_page,
-            results=[ChatPublic.model_validate(chat) for chat in chats],
+            results=[ChatEntity.model_validate(chat) for chat in chats],
         )
 
     async def delete(self, chat_id: int, current_user_id: int) -> None:
-        chat = await self.db.get(Chat, chat_id)
+        chat = await self.db.get(ChatModel, chat_id)
 
         if not chat:
             logging.warning(f"Пользователь id={current_user_id} попытался удалить несуществующий чат")

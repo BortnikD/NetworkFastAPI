@@ -15,12 +15,3 @@ class CommentCreate(CommentBase):
 
 class CommentUpdate(CommentBase):
     id: int
-
-
-class CommentPublic(CommentBase):
-    id: int
-    user_id: int
-    post_id: int
-    created_at: datetime
-    is_repost: bool = False
-    

@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from datetime import datetime
 
 
 class ChatBase(BaseModel):
@@ -12,10 +11,6 @@ class ChatBase(BaseModel):
 
 class ChatCreate(ChatBase):
     pass
-
-
-class ChatPublic(ChatBase):
-    id: int
 
 
 class ChatMessageBase(BaseModel):
@@ -34,9 +29,3 @@ class ChatMessageUpdate(ChatMessageBase):
     id: int
 
 
-class ChatMessagePublic(ChatMessageBase):
-    id: int
-    chat_id: int
-    sender_id: int
-    created_at: datetime
-    updated_at: datetime

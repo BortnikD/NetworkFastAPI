@@ -6,7 +6,7 @@ from app.domain.repositories.chat import IChat
 from app.domain.repositories.chat_message import IChatMessage
 from app.domain.repositories.redis import IRedis
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
-from app.infrastructure.database.models.chat import Chat, ChatMessage
+from app.domain.entities.chat import Chat, ChatMessage
 
 
 class ChatService:
