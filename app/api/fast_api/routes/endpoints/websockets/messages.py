@@ -31,7 +31,7 @@ async def send_message(websocket: WebSocket,
         return
 
     try:
-        user = await user_service.get_by_token(token)
+        user = await user_service._get_by_token(token)
     except UserDoesNotExist:
         await websocket.close(code=1008)
         return

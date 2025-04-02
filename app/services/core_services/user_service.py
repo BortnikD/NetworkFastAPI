@@ -19,12 +19,12 @@ class UserService:
     async def get_by_id(self, user_id: int) -> User:
         return await self.user_port.get_by_id(user_id)
 
-    async def get_by_email(self, email: str) -> UserDB:
+    async def _get_by_email(self, email: str) -> UserDB:
         return await self.user_port.get_by_email(email)
 
-    async def get_by_token(self, token: str) -> User:
+    async def _get_by_token(self, token: str) -> UserDB:
         email = decode_access_token(token)
         if not email:
             raise UserDoesNotExist("email is empty")
-        user = await self.get_by_email(email)
+        user = await self._get_by_email(email)
         return user

@@ -20,7 +20,7 @@ async def authenticate_user(
     password: str,
     user_service: UserService = Depends(get_user_service)
 ) -> User | None:
-    user = await user_service.get_by_email(email)
+    user = await user_service._get_by_email(email)
     if not user or not verify_password(password, user.password_hash):
         return None
     return user

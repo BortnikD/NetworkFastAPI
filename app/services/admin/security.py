@@ -14,7 +14,7 @@ from app.infrastructure.settings.config import AUTH_KEY, HASHING_ALGORITHM
 async def authenticate_user(email: str, password: str) -> User | None:
     async with AsyncSessionLocal() as session:
         user_service = get_user_service(session)
-        user = await user_service.get_by_email(email)
+        user = await user_service._get_by_email(email)
         if not user or not verify_password(password, user.password_hash):
             return None
         return user
@@ -29,7 +29,7 @@ async def get_user_from_token(token: str) -> User | None:
 
         async with AsyncSessionLocal() as session:
             user_service = get_user_service(session)
-            user = await user_service.get_by_email(email)
+            user = await user_service._get_by_email(email)
             return user if user and user.is_superuser else None
     except Exception as e:
         logging.error(e)
