@@ -8,6 +8,9 @@ class Chat(BaseModel):
     first_user_id: int
     second_user_id: int
 
+    class Config:
+        from_attributes = True
+
 
 class ChatMessage(BaseModel):
     id: int
@@ -16,3 +19,6 @@ class ChatMessage(BaseModel):
     text: str
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True

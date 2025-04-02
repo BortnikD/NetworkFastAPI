@@ -8,3 +8,6 @@ class User(BaseModel):
     first_name: str | None
     last_name: str | None
     is_active: bool = False
+
+    class Config:
+        from_attributes = True

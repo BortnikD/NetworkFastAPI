@@ -21,7 +21,7 @@ router = APIRouter(prefix='/users')
 async def create_user(
     user_create: UserCreate,
     service: UserService = Depends(get_user_service)
-) -> User:
+    ) -> User:
     """Создание нового пользователя."""
     try:
         return await service.save(user_create)
@@ -35,7 +35,7 @@ async def create_user(
 async def read_users(
     pagination: Annotated[UsersPagination, Query()],
     service: UserService = Depends(get_user_service)
-) -> PaginatedResponse[User]:
+    ) -> PaginatedResponse:
     """Получение списка пользователей с пагинацией."""
     return await service.get_all(pagination.offset, pagination.limit)
 
@@ -45,7 +45,7 @@ async def read_users(
 async def read_user(
     user_id: Annotated[int, Path(gt=0)],
     service: UserService = Depends(get_user_service)
-) -> User:
+    ) -> User:
     """Получение пользователя по ID."""
     try:
         return await service.get_by_id(user_id)
