@@ -1,12 +1,11 @@
-from fastapi import HTTPException
-
+from app.domain.entities.chat import Chat, ChatMessage
 from app.domain.dto.chat import ChatCreate
 from app.domain.dto.pagination import PaginatedResponse
+from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
+from app.domain.exceptions.base import AccessError
 from app.domain.repositories.chat import IChat
 from app.domain.repositories.chat_message import IChatMessage
 from app.domain.repositories.redis import IRedis
-from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
-from app.domain.entities.chat import Chat, ChatMessage
 
 
 class ChatService:
@@ -51,7 +50,7 @@ class ChatService:
                 await self.cache_port.set_cache(f'{self.cache_path}:{chat_id}', messages)
                 return messages
         else:
-            raise HTTPException(status_code=403, detail="You have no access rights")
+            raise AccessError("You have not access to this chat")
 
 
     async def create_message(self, message: ChatMessageCreate) -> ChatMessage | None:

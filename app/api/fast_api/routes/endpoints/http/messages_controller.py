@@ -57,6 +57,8 @@ async def get_chat_history(chat_id: int,
         return await message_service.get_chat_messages(user.id, chat_id, pagination.offset, pagination.limit)
     except ChatDoesNotExist as e:
         raise HTTPException(status_code=404, detail=e.message)
+    except AccessError as e:
+        raise HTTPException(status_code=403, detail=e.message)
 
 
 @router.delete('/delete_chat/{chat_id}')

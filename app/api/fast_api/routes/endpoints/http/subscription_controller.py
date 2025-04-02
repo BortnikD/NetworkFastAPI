@@ -7,7 +7,7 @@ from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.subscription import (
     SubscriptionAlreadyExists,
     SubscriptionDoesNotExist,
-    SubscriptionDeleteError
+    SubscriptionDeleteError, SelfSubscriptionError
 )
 
 from app.services.core_services.subscription_service import SubscriptionService
@@ -41,6 +41,8 @@ async def create_subscription(
     try:
         return await service.save(current_user.id, followed_user_id)
     except SubscriptionAlreadyExists as e:
+        raise HTTPException(status_code=409, detail=e.message)
+    except SelfSubscriptionError as e:
         raise HTTPException(status_code=409, detail=e.message)
 
 

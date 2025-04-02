@@ -1,8 +1,7 @@
-from fastapi import HTTPException
-
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.entities.subscription import Subscription
 from app.domain.repositories.subscription import ISubscription
+from app.domain.exceptions.subscription import SelfSubscriptionError
 
 
 class SubscriptionService:
@@ -11,7 +10,7 @@ class SubscriptionService:
 
     async def save(self, follower_id: int, followed_user_id: int) -> Subscription:
         if follower_id == followed_user_id:
-            raise HTTPException(status_code=409, detail='You cannot subscribe to yourself')
+            raise SelfSubscriptionError('You cannot subscribe to yourself')
         return await self.subscription_port.save(follower_id, followed_user_id)
 
     async def get_subscriptions_by_user_id(self, user_id: int, offset: int, limit: int) -> PaginatedResponse:

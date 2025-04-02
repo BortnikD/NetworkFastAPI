@@ -11,3 +11,7 @@ class SubscriptionDoesNotExist(DomainError):
 
 class SubscriptionDeleteError(DomainError):
     pass
+
+
+class SelfSubscriptionError(DomainError):
+    pass
