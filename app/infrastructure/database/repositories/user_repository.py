@@ -36,13 +36,7 @@ class UserRepository(IUser):
 
     async def save(self, user_create: UserCreate) -> UserEntity:
         hashed_password = self.pwd_context.hash(user_create.password)
-        db_user = UserModel(
-            username=user_create.username,
-            email=user_create.email,
-            first_name=user_create.first_name,
-            last_name=user_create.last_name,
-            password_hash=hashed_password
-        )
+        db_user = UserModel(**user_create.model_dump(), password_hash=hashed_password)
         self.db.add(db_user)
         try:
             await self.db.commit()
