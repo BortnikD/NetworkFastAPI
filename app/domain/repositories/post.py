@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.domain.dto.pagination import PaginatedResponse
-from app.domain.entities import Post
+from app.domain.entities.post import Post
 from app.domain.dto.post import PostCreate, PostUpdate
 
 
