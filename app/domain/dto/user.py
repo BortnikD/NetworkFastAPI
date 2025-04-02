@@ -21,3 +21,9 @@ class UserPublic(UserBase):
     id: int
     is_active: bool = False
 
+
+class UserDB(UserPublic):
+    password_hash: str
+    date_joined: datetime
+    last_active_time: datetime
+    is_superuser: bool

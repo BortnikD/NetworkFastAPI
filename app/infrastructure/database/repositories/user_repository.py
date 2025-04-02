@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import User as UserEntity
 from app.domain.repositories.user import IUser
-from app.domain.dto.user import UserCreate
+from app.domain.dto.user import UserCreate, UserDB
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.exceptions.user import (
     UserDoesNotExist,
@@ -25,14 +25,14 @@ class UserRepository(IUser):
         self.db = db
         self.pwd_context = pwd_context
 
-    async def get_by_email(self, email: str) -> UserEntity:
+    async def get_by_email(self, email: str) -> UserDB:
         result = await self.db.execute(select(UserModel).filter(UserModel.email == email))
         if not result:
             logging.warning(f'user with email={email} does not exist')
             raise UserDoesNotExist("User with this email does not exist")
         user_model = result.scalars().first()
         logging.info(f"User with email={email} has been issued")
-        return UserEntity.model_validate(user_model)
+        return UserDB.model_validate(user_model)
 
     async def save(self, user_create: UserCreate) -> UserEntity:
         hashed_password = self.pwd_context.hash(user_create.password)

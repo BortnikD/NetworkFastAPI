@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.entities.user import User
-from app.domain.dto.user import UserCreate
+from app.domain.dto.user import UserCreate, UserDB
 
 
 class IUser(ABC):
@@ -11,7 +11,7 @@ class IUser(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> UserDB:
         raise NotImplementedError
 
     @abstractmethod
