@@ -1,11 +1,10 @@
 import jwt
-from typing import Annotated, Any, Coroutine
+from typing import Annotated
 from jwt.exceptions import InvalidTokenError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.domain.dto.user import UserDB
-from app.infrastructure.database.models.user import User
 from app.dependencies.services.user import get_user_service
 from app.services.core_services.user_service import UserService
 from app.infrastructure.settings.config import AUTH_KEY, HASHING_ALGORITHM
@@ -38,6 +37,6 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)],
-):
+        current_user: Annotated[UserDB, Depends(get_current_user)],
+) -> UserDB:
     return current_user
