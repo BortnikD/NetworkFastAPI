@@ -83,10 +83,6 @@ class ChatMessageRepository(IChatMessage):
             logging.warning(f"Сообщение с id={message.id} не существует")
             raise MessageDoesNotExist("Сообщение не существует")
 
-        if db_message.sender_id != current_user_id:
-            logging.warning(f"Пользователь с id={current_user_id} не может обновить сообщение id={message.id}")
-            raise AccessError("У вас нет прав для обновления этого сообщения")
-
         if db_message.text == message.text:
             logging.info(f"Сообщение с id={message.id} без изменений")
             return ChatMessageEntity.model_validate(db_message)
