@@ -9,7 +9,6 @@ from app.domain.entities.chat import ChatMessage as ChatMessageEntity
 from app.domain.dto.chat import ChatMessageCreate, ChatMessageUpdate
 from app.domain.dto.pagination import PaginatedResponse
 from app.domain.repositories.chat_message import IChatMessage
-from app.domain.exceptions.base import AccessError
 from app.domain.exceptions.chat import (
     ChatDoesNotExist,
     MessageCreateError,
