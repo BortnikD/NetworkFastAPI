@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, Body, HTTPException
 from typing import Annotated
 
-from app.domain.dto.user import UserPublic
+from app.domain.dto.user import UserDB
 from app.domain.dto.post import PostCreate, PostUpdate
 from app.domain.entities.post import Post
 from app.domain.dto.pagination import PaginatedResponse, PostPagination
@@ -32,7 +32,7 @@ async def read_posts(
 @router.post('/')
 async def create_post(
         text_content: str = Body(...),
-        current_user: UserPublic = Depends(get_current_active_user),
+        current_user: UserDB = Depends(get_current_active_user),
         post_service: PostService = Depends(get_post_service)
         ) -> Post:
     """Создание нового поста."""
@@ -46,7 +46,7 @@ async def create_post(
 @router.delete('/{post_id}')
 async def delete_post(
         post_id: int,
-        current_user: UserPublic = Depends(get_current_active_user),
+        current_user: UserDB = Depends(get_current_active_user),
         post_service: PostService = Depends(get_post_service)
         ) -> None:
     """Удаление поста пользователя."""
@@ -63,7 +63,7 @@ async def delete_post(
 @router.patch('/')
 async def update_post(
         post: PostUpdate,
-        current_user: UserPublic = Depends(get_current_active_user),
+        current_user: UserDB = Depends(get_current_active_user),
         post_service: PostService = Depends(get_post_service)
         ) -> Post:
     """Обновление поста."""
