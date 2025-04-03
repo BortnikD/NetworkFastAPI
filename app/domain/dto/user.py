@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
 from typing import Optional
+
+from app.domain.entities.user import User
 
  
 class UserBase(BaseModel):
@@ -17,13 +18,5 @@ class UserCreate(UserBase):
     password: str
 
 
-class UserPublic(UserBase):
-    id: int
-    is_active: bool = False
-
-
-class UserDB(UserPublic):
+class UserDB(User):
     password_hash: str
-    date_joined: datetime
-    last_active_time: datetime
-    is_superuser: bool

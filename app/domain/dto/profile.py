@@ -1,9 +1,6 @@
-from app.domain.dto.user import UserPublic
+from app.domain.entities.user import User
 
 
-class ProfilePublic(UserPublic):
+class ProfilePublic(User):
     followers_count: int
     followed_count: int
-
-    class Config:
-        from_attributes = True
