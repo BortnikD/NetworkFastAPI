@@ -64,5 +64,8 @@ class ChatService:
 
 
     async def delete_message(self, message_id: int, current_user_id: int) -> None:
-        # TODO добавить очистку кэша, для этого нужно будет дополнительно получать chat_id
-        await self.chat_message_port.delete(message_id, current_user_id)
+        message = await self.chat_message_port.get_message_by_id(message_id)
+        if message.user_id != current_user_id:
+            raise AccessError("You have not access to this message")
+        await self.chat_message_port.delete(message.id, current_user_id)
+        await self.cache_port.clear_cache(f'{self.cache_path}:{message.chat_id}')
