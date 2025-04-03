@@ -68,6 +68,15 @@ class ChatMessageRepository(IChatMessage):
             results=[ChatMessageEntity.model_validate(message) for message in messages]
         )
 
+    async def get_message_by_id(self, message_id: int) -> ChatMessageEntity:
+        message = await self.db.get(ChatMessageModel, message_id)
+        if not message:
+            logging.warning(f"Сообщение с id={message_id} не найдено")
+            raise MessageDoesNotExist("Сообщение не существует")
+
+        logging.info(f"Сообщение с id={message_id} найдено")
+        return ChatMessageEntity.model_validate(message)
+
     async def update(self, message: ChatMessageUpdate, current_user_id: int) -> ChatMessageEntity:
         db_message = await self.db.get(ChatMessageModel, message.id)
         if not db_message:
@@ -97,16 +106,6 @@ class ChatMessageRepository(IChatMessage):
         if not message:
             logging.warning(f"Пользователь с id={current_user_id} попытался удалить несуществующее сообщение")
             raise MessageDoesNotExist("Сообщение не существует")
-
-        chat = message.chat
-        if not chat:
-            logging.warning(f"Чат для сообщения с id={message_id} не существует")
-            raise ChatDoesNotExist("Чат не существует")
-
-        if chat.first_user_id != current_user_id and chat.second_user_id != current_user_id:
-            logging.warning(
-                f"Пользователь с id={current_user_id} не является участником чата для сообщения id={message_id}")
-            raise AccessError("У вас нет прав доступа")
 
         try:
             await self.db.delete(message)

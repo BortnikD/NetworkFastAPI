@@ -8,11 +8,15 @@ from app.domain.dto.chat import ChatMessageUpdate
 
 class IChatMessage(ABC):
     @abstractmethod
-    async def save(self, message: ChatMessageCreate) -> ChatMessage | None:
+    async def save(self, message: ChatMessageCreate) -> ChatMessage:
         raise NotImplementedError
 
     @abstractmethod
     async def get_by_chat_id(self, chat_id: int, offset: int, limit: int) -> PaginatedResponse:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_message_by_id(self, message_id: int) -> ChatMessage:
         raise NotImplementedError
 
     @abstractmethod
