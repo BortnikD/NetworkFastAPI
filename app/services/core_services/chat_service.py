@@ -30,6 +30,7 @@ class ChatService:
         return user_id in (chat.first_user_id, chat.second_user_id)
 
     async def delete_chat(self, chat_id: int, current_user_id: int) -> None:
+        await self.cache_port.clear_cache(f'{self.cache_path}:{chat_id}')
         await self.chat_port.delete(chat_id, current_user_id)
 
     async def get_chats_by_user_id(self, current_user_id: int, offset: int, limit: int) -> PaginatedResponse:
@@ -39,12 +40,13 @@ class ChatService:
         if not await self.is_user_chat(user_id, chat_id):
             raise AccessError("You have not access to this chat")
 
-        cache_messages = await self.cache_port.get_cache(f'{self.cache_path}:{chat_id}')
+        cache_key = f'{self.cache_path}:{chat_id}:{offset}:{limit}'
+        cache_messages = await self.cache_port.get_cache(cache_key)
         if cache_messages:
             return PaginatedResponse(**cache_messages)
         else:
             messages = await self.chat_message_port.get_by_chat_id(chat_id, offset, limit)
-            await self.cache_port.set_cache(f'{self.cache_path}:{chat_id}', messages)
+            await self.cache_port.set_cache(cache_key, messages)
             return messages
 
 
