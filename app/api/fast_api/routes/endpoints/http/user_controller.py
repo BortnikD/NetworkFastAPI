@@ -40,7 +40,6 @@ async def read_users(
     return await service.get_all(pagination.offset, pagination.limit)
 
 
-
 @router.get('/{user_id}')
 async def read_user(
     user_id: Annotated[int, Path(gt=0)],

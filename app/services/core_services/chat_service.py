@@ -49,7 +49,6 @@ class ChatService:
             await self.cache_port.set_cache(cache_key, messages)
             return messages
 
-
     async def create_message(self, message: ChatMessageCreate) -> ChatMessage | None:
         await self.cache_port.clear_cache(f'{self.cache_path}:{message.chat_id}')
         return await self.chat_message_port.save(message)
