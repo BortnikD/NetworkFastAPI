@@ -21,7 +21,9 @@ class ChatService:
 
     async def init_chat(self, current_user_id: int, target_user_id: int) -> Chat:
         chat_create = ChatCreate(first_user_id=current_user_id, second_user_id=target_user_id)
-        return await self.chat_port.save(chat_create)
+        results = await self.chat_port.save(chat_create)
+        await self.cache_port.clear_cache( f'{self.cache_path}:chats:{current_user_id}')
+        return results
 
     async def is_user_chat(self, user_id: int, chat_id: int) -> bool:
         chat = await self.chat_port.get_by_id(chat_id)
@@ -34,7 +36,13 @@ class ChatService:
         await self.chat_port.delete(chat_id, current_user_id)
 
     async def get_chats_by_user_id(self, current_user_id: int, offset: int, limit: int) -> PaginatedResponse:
-        return await self.chat_port.get_all_by_user_id(current_user_id, offset, limit)
+        cache_key = f'{self.cache_path}:chats:{current_user_id}'
+        results = await self.cache_port.get_cache(cache_key)
+        if results:
+            return PaginatedResponse(**results)
+        results = await self.chat_port.get_all_by_user_id(current_user_id, offset, limit)
+        await self.cache_port.set_cache(cache_key, results)
+        return results
 
     async def get_chat_messages(self, user_id: int, chat_id: int, offset: int, limit: int) -> PaginatedResponse:
         if not await self.is_user_chat(user_id, chat_id):
@@ -44,10 +52,9 @@ class ChatService:
         cache_messages = await self.cache_port.get_cache(cache_key)
         if cache_messages:
             return PaginatedResponse(**cache_messages)
-        else:
-            messages = await self.chat_message_port.get_by_chat_id(chat_id, offset, limit)
-            await self.cache_port.set_cache(cache_key, messages)
-            return messages
+        messages = await self.chat_message_port.get_by_chat_id(chat_id, offset, limit)
+        await self.cache_port.set_cache(cache_key, messages)
+        return messages
 
     async def create_message(self, message: ChatMessageCreate) -> ChatMessage | None:
         await self.cache_port.clear_cache(f'{self.cache_path}:{message.chat_id}')
