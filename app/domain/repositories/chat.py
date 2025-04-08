@@ -11,7 +11,7 @@ class IChat(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, chat_id: int) -> Chat | None:
+    async def get_by_id(self, chat_id: int) -> Chat:
         raise NotImplementedError
 
     @abstractmethod
